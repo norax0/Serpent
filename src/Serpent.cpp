@@ -1,5 +1,7 @@
 #include "Serpent.hpp"
 
-void Serpent::geode::enums() {
+namespace py = pybind11;
+
+void Serpent::geode::enums(py::module& m) {
 
 }
