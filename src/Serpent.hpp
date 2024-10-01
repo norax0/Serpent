@@ -14,5 +14,5 @@ namespace Serpent {
     struct robtop {
         static void bind(pybind11::module& m);
         static void enums(pybind11::module& m);
-    }
+    };
 }
