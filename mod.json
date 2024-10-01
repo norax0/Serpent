@@ -10,5 +10,6 @@
 	"name": "Serpent",
 	"version": "v1.0.0",
 	"developer": "YellowCat98",
-	"description": "Run python scripts within GD."
+	"description": "Run python scripts within GD.",
+	"tags": ["modtober24"]
 }
