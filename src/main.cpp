@@ -5,20 +5,27 @@
 #include "Serpent.hpp"
 
 namespace py = pybind11;
+using namespace geode::prelude;
+
+//
 
 $execute {
 	py::initialize_interpreter();
 	Serpent::initModule();
 	Serpent::_geode::enums();
 	Serpent::_geode::bind();
-}
+	Serpent::cocos::enums();
+	Serpent::cocos::bind();
+	Serpent::robtop::bind();
 
-class $modify(MenuLayer) {
-	void onMoreGames(CCObject*) {
+	py::exec(R"(
+def MenuLayer_init(this):
+	if not this.init():
+		return False
+	
+	info("Hook reached!")
 
-		py::exec(R"(
-notif = Notification.create("Hello!!!")
-notif.show()
+	return True
 )");
-	}
-};
+	Serpent::hook::initAllHooks();
+}

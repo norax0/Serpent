@@ -147,3 +147,12 @@ void Serpent::cocos::enums() {
 		.value("GameObject", CCObjectType::GameObject)
 		.value("MenuLayer", CCObjectType::MenuLayer);
 }
+
+void Serpent::robtop::bind() {
+	py::class_<GooglePlayDelegate>(m, "GooglePlayDelegate")	
+		.def("googlePlaySignedIn", py::overload_cast<>(&GooglePlayDelegate::googlePlaySignedIn));
+
+	py::class_<MenuLayer, CCLayer, GooglePlayDelegate>(m, "MenuLayer")
+		.def_static("scene", py::overload_cast<bool>(&MenuLayer::scene))
+		.def("init", py::overload_cast<>(&MenuLayer::init));
+}
