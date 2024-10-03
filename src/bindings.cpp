@@ -68,6 +68,12 @@ void Serpent::cocos::bind() {
 		.def_readwrite("height", &CCSize::height)
 		.def_readwrite("width", &CCSize::width);
 	
+	py::class_<ccColor3B>(m, "ccColor3B")
+		.def(py::init<>())
+		.def_readwrite("r", &ccColor3B::r)
+		.def_readwrite("g", &ccColor3B::g)
+		.def_readwrite("g", &ccColor3B::b);
+	
 	py::class_<CCNode, CCObject>(m, "CCNode")
 		.def_static("create", &CCNode::create, py::return_value_policy::reference)
 		.def("init", &CCNode::init)
@@ -119,6 +125,19 @@ void Serpent::cocos::bind() {
 		.def("getChildByID", py::overload_cast<std::string const&>(&CCNode::getChildByID), py::arg("id"))
 		.def("getChildByIDRecursive", py::overload_cast<std::string const&>(&CCNode::getChildByIDRecursive), py::arg("id"))
 		.def("removeChildByID", py::overload_cast<std::string const&>(&CCNode::removeChildByID), py::arg("id"));
+	
+	py::class_<CCRGBAProtocol>(m, "CCRGBAProtocol")
+		.def("setColor", py::overload_cast<ccColor3B const&>(&CCRGBAProtocol::setColor), py::arg("color"))
+		.def("getColor", py::overload_cast<>(&CCRGBAProtocol::getColor))
+		.def("getDisplayedColor", py::overload_cast<>(&CCRGBAProtocol::getDisplayedColor))
+		.def("setOpacity", py::overload_cast<GLubyte>(&CCRGBAProtocol::setOpacity), py::arg("opacity"))
+		.def("getOpacity", py::overload_cast<>(&CCRGBAProtocol::getOpacity));
+	
+	py::class_<CCLayer, CCNode>(m, "CCLayer")
+		.def_static("create", py::overload_cast<>(&CCLayer::create), py::return_value_policy::reference);
+	
+	py::class_<CCLayerRGBA, CCLayer, CCRGBAProtocol>(m, "CCLayerRGBA")
+		.def_static("create", py::overload_cast<>(&CCLayerRGBA::create), py::return_value_policy::reference);
 }
 
 void Serpent::cocos::enums() {
