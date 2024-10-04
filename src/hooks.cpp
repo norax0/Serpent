@@ -7,8 +7,8 @@ bool MenuLayer_init(MenuLayer* self) {
 }
 
 namespace Serpent::hook {
-    // automatically enabels hook whenever a function is defined as ClassName_function
-    // @note[short] doesnt work for all functions.
+    // automatically enable hooks whenever a function is defined as ClassName_function
+
     void initAllHooks() {
         log::info("Enabling hooks");
         if (pybind11::globals().contains("MenuLayer_init")) {
@@ -21,6 +21,8 @@ namespace Serpent::hook {
 
             if (result.isErr()) {
                 log::error("An error occured enabling hook for MenuLayer::init: {}", result.err());
+            } else {
+                log::info("MenuLayer::init hook");
             }
         }
     }

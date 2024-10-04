@@ -11,7 +11,7 @@ void Serpent::initModule() {
 
 // geode
 
-void Serpent::_geode::bind() {
+void Serpent::bindings::_geode::bind() {
 	py::class_<Notification>(m, "Notification")
 		.def_static("create", static_cast<Notification* (*)(const std::string&, NotificationIcon, float)>(&Notification::create), py::arg("text"), py::arg("icon") = NotificationIcon::None, py::arg("time") = geode::NOTIFICATION_DEFAULT_TIME, py::return_value_policy::reference)
 		.def("show", &Notification::show)
@@ -35,7 +35,7 @@ void Serpent::_geode::bind() {
 	});
 }
 
-void Serpent::_geode::enums() {
+void Serpent::bindings::_geode::enums() {
 	py::enum_<NotificationIcon>(m, "NotificationIcon")
 		.value("None", NotificationIcon::None)
 		.value("Loading", NotificationIcon::Loading)
@@ -47,7 +47,7 @@ void Serpent::_geode::enums() {
 
 // cocos
 
-void Serpent::cocos::bind() {
+void Serpent::bindings::cocos::bind() {
 	py::class_<CCObject>(m, "CCObject")
 		.def("release", &CCObject::release)
 		.def("retain", &CCObject::retain)
@@ -67,6 +67,11 @@ void Serpent::cocos::bind() {
 		.def(py::init<>())
 		.def_readwrite("height", &CCSize::height)
 		.def_readwrite("width", &CCSize::width);
+	
+	py::class_<CCRect>(m, "CCRect")
+		.def_readwrite("origin", &CCRect::origin)
+		.def_readwrite("size", &CCRect::size)
+		.def("intersectsRect", py::overload_cast<CCRect const&>(&CCRect::intersectsRect, py::const_));
 	
 	py::class_<ccColor3B>(m, "ccColor3B")
 		.def(py::init<>())
@@ -138,9 +143,26 @@ void Serpent::cocos::bind() {
 	
 	py::class_<CCLayerRGBA, CCLayer, CCRGBAProtocol>(m, "CCLayerRGBA")
 		.def_static("create", py::overload_cast<>(&CCLayerRGBA::create), py::return_value_policy::reference);
+
+	py::class_<CCNodeRGBA, CCNode, CCRGBAProtocol>(m, "CCNodeRGBA")
+		.def_static("create", py::overload_cast<>(&CCNodeRGBA::create), py::return_value_policy::reference);
+	
+	py::class_<CCTexture2D, CCObject>(m, "CCTexture2D")
+		.def(py::init<>());
+	
+	py::class_<CCTextureProtocol>(m, "CCTextureProtocol")
+		.def("getTexture", &CCTextureProtocol::getTexture)
+		.def("setTexture", &CCTextureProtocol::setTexture);
+	
+	py::class_<CCSprite, CCNodeRGBA, CCTextureProtocol>(m, "CCSprite")
+		.def_static("create", py::overload_cast<const char*>(&CCSprite::create), py::arg("pszFileName"), py::return_value_policy::reference)
+		.def_static("create", py::overload_cast<>(&CCSprite::create), py::return_value_policy::reference)
+		.def_static("create", py::overload_cast<const char*, CCRect const&>(&CCSprite::create), py::arg("pszFileName"), py::arg("rect"), py::return_value_policy::reference)
+		.def_static("createWithSpriteFrameName", py::overload_cast<const char*>(&CCSprite::createWithSpriteFrameName), py::arg("pszSpriteFrameName"), py::return_value_policy::reference);
+
 }
 
-void Serpent::cocos::enums() {
+void Serpent::bindings::cocos::enums() {
 	py::enum_<CCObjectType>(m, "CCObjectType") // i actualy dont know why this exists but ill just bind it for the 2 people that want it!
 		.value("PlayLayer", CCObjectType::PlayLayer)
 		.value("LevelEditorLayer", CCObjectType::LevelEditorLayer)
@@ -148,7 +170,7 @@ void Serpent::cocos::enums() {
 		.value("MenuLayer", CCObjectType::MenuLayer);
 }
 
-void Serpent::robtop::bind() {
+void Serpent::bindings::robtop::bind() {
 	py::class_<GooglePlayDelegate>(m, "GooglePlayDelegate")	
 		.def("googlePlaySignedIn", py::overload_cast<>(&GooglePlayDelegate::googlePlaySignedIn));
 

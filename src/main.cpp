@@ -6,24 +6,25 @@
 
 namespace py = pybind11;
 using namespace geode::prelude;
-
-//
+using namespace Serpent;
 
 $execute {
 	py::initialize_interpreter();
 	Serpent::initModule();
-	Serpent::_geode::enums();
-	Serpent::_geode::bind();
-	Serpent::cocos::enums();
-	Serpent::cocos::bind();
-	Serpent::robtop::bind();
+	bindings::_geode::enums();
+	bindings::_geode::bind();
+	bindings::cocos::enums();
+	bindings::cocos::bind();
+	bindings::robtop::bind();
 
 	py::exec(R"(
 def MenuLayer_init(this):
 	if not this.init():
 		return False
 	
-	info("Hook reached!")
+	sprite = CCSprite.createWithSpriteFrameName("GJ_arrow_01_001.png")
+	sprite.setID("sprite-from-python-cool")
+	this.addChild(sprite)
 
 	return True
 )");

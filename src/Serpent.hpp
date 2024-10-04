@@ -17,18 +17,21 @@ namespace Serpent {
 	namespace hook {
 		void initAllHooks();
 	}
-	struct _geode { // prefixed with _ so compiler/YOU doesnt/dont get confused between Serpent::geode and geode ns
-		static void bind();
-		static void enums();
-	};
 
-	struct cocos {
-		static void bind();
-		static void enums();
-	};
+	namespace bindings {
+		struct _geode { // prefixed with _ so compiler/YOU doesnt/dont get confused between Serpent::geode and geode ns
+			static void bind();
+			static void enums();
+		};
 
-	struct robtop {
-		static void bind();
-		static void enums();
-	};
+		struct cocos {
+			static void bind();
+			static void enums();
+		};
+
+		struct robtop {
+			static void bind();
+			static void enums();
+		};
+	}
 }
