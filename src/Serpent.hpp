@@ -1,5 +1,6 @@
 #pragma once
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 
 
 #define CREATE_WRAPPER_FOR(function, pyfn, type, class_, ...)                     \
@@ -12,7 +13,7 @@ type pyfn(class_ self, __VA_ARGS__) {                                           
 if (pybind11::globals().contains(#pyfn)) {                            \
     auto result = Mod::get()->hook(                                   \
         reinterpret_cast<void*>(address),                             \
-        &pyfn,                                                        \
+        &pyfn,                                                         \
         #function,                                                    \
         tulip::hook::TulipConvention::convention                      \
     );                                                                \
@@ -45,5 +46,10 @@ namespace Serpent {
 			static void bind();
 			static void enums();
 		};
+	}
+
+	namespace utility {
+		template <typename T>
+		T getLambdaAddr(std::function<T> lambda);
 	}
 }

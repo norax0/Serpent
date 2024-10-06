@@ -18,18 +18,24 @@ $execute {
 	bindings::robtop::bind();
 
 	py::exec(R"(
+def callback(sender):
+	info("HI!!!!")
+
 def MenuLayer_init(this):
-	if not this.init():
-		return False
-	
-	sprite = CCSprite.createWithSpriteFrameName("GJ_arrow_01_001.png")
-	sprite.setID("sprite-from-python-cool")
-	this.addChild(sprite)
+	if not this.init(): return False
+	director = CCDirector.get()
+	winSize = director.getWinSize()
+	info("hello")
+	menu = this.getChildByID("profile-menu")
 
+	button = CCMenuItemExt.createSpriteExtra(CCSprite.createWithSpriteFrameName("GJ_arrow_01_001.png"), callback)
+
+	if not button:
+		error("button is false")
+	else:
+		info("button is true")
+		menu.addChild(button)
 	return True
-
-def MenuLayer_onMoreGames(this, sender):
-	info("MenuLayer::onMoreGames hook SUCCESS")
 )");
 	Serpent::hook::initAllHooks();
 }

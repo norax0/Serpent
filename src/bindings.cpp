@@ -59,12 +59,12 @@ void Serpent::bindings::cocos::bind() {
 		.def("isEqual", &CCObject::isEqual, py::arg("pObject"));
 	
 	py::class_<CCPoint>(m, "CCPoint")
-		.def(py::init<>())
+		.def(py::init<float, float>())
 		.def_readwrite("x", &CCPoint::x)
 		.def_readwrite("y", &CCPoint::y);
 	
 	py::class_<CCSize>(m, "CCSize")
-		.def(py::init<>())
+		.def(py::init<float, float>())
 		.def_readwrite("height", &CCSize::height)
 		.def_readwrite("width", &CCSize::width);
 	
@@ -78,6 +78,10 @@ void Serpent::bindings::cocos::bind() {
 		.def_readwrite("r", &ccColor3B::r)
 		.def_readwrite("g", &ccColor3B::g)
 		.def_readwrite("g", &ccColor3B::b);
+
+	py::class_<CCDirector>(m, "CCDirector")
+		.def_static("get", py::overload_cast<>(&CCDirector::get), py::return_value_policy::reference)
+		.def("getWinSize", py::overload_cast<>(&CCDirector::getWinSize));
 	
 	py::class_<CCNode, CCObject>(m, "CCNode")
 		.def_static("create", &CCNode::create, py::return_value_policy::reference)
@@ -117,7 +121,7 @@ void Serpent::bindings::cocos::bind() {
 		.def("addChild", py::overload_cast<CCNode*>(&CCNode::addChild), py::arg("child"))
 		.def("addChild", py::overload_cast<CCNode*, int>(&CCNode::addChild), py::arg("child"), py::arg("zOrder"))
 		.def("addChild", py::overload_cast<CCNode*, int, int>(&CCNode::addChild), py::arg("child"), py::arg("zOrder"), py::arg("tag"))
-		.def("getChildByTag", py::overload_cast<int>(&CCNode::getChildByTag), py::arg("tag"))
+		.def("getChildByTag", py::overload_cast<int>(&CCNode::getChildByTag), py::arg("tag"), py::return_value_policy::reference)
 		.def("getParent", py::overload_cast<>(&CCNode::getParent))
 		.def("removeFromParent", py::overload_cast<>(&CCNode::removeFromParent))
 		.def("removeFromParentAndCleanup", py::overload_cast<bool>(&CCNode::removeFromParentAndCleanup), py::arg("cleanup"))
@@ -127,8 +131,8 @@ void Serpent::bindings::cocos::bind() {
 		.def("removeAllChildrenAndCleanup", py::overload_cast<bool>(&CCNode::removeAllChildrenWithCleanup), py::arg("cleanup")) // binded as 2 separate functions (wanted to bind removeAllChildrenWithCleanup only, but didnt want to cause confusion)
 		.def("getID", py::overload_cast<>(&CCNode::getID))
 		.def("setID", py::overload_cast<std::string const&>(&CCNode::setID), py::arg("id"))
-		.def("getChildByID", py::overload_cast<std::string const&>(&CCNode::getChildByID), py::arg("id"))
-		.def("getChildByIDRecursive", py::overload_cast<std::string const&>(&CCNode::getChildByIDRecursive), py::arg("id"))
+		.def("getChildByID", py::overload_cast<std::string const&>(&CCNode::getChildByID), py::arg("id"), py::return_value_policy::reference)
+		.def("getChildByIDRecursive", py::overload_cast<std::string const&>(&CCNode::getChildByIDRecursive), py::arg("id"), py::return_value_policy::reference)
 		.def("removeChildByID", py::overload_cast<std::string const&>(&CCNode::removeChildByID), py::arg("id"));
 	
 	py::class_<CCRGBAProtocol>(m, "CCRGBAProtocol")
@@ -159,8 +163,40 @@ void Serpent::bindings::cocos::bind() {
 		.def_static("create", py::overload_cast<>(&CCSprite::create), py::return_value_policy::reference)
 		.def_static("create", py::overload_cast<const char*, CCRect const&>(&CCSprite::create), py::arg("pszFileName"), py::arg("rect"), py::return_value_policy::reference)
 		.def_static("createWithSpriteFrameName", py::overload_cast<const char*>(&CCSprite::createWithSpriteFrameName), py::arg("pszSpriteFrameName"), py::return_value_policy::reference);
+	
+	py::class_<CCSpriteBatchNode, CCNode, CCTextureProtocol>(m, "CCSpriteBatchNode")
+		.def_static("create", py::overload_cast<char const*>(&CCSpriteBatchNode::create), py::arg("fileImage"), py::return_value_policy::reference);
+	
+	py::class_<CCLabelProtocol>(m, "CCLabelProtocol")
+		.def("setString", py::overload_cast<char const*>(&CCLabelProtocol::setString), py::arg("label"))
+		.def("getString", py::overload_cast<>(&CCLabelProtocol::getString));
 
+	py::class_<CCLabelBMFont, CCSpriteBatchNode, CCLabelProtocol, CCRGBAProtocol>(m, "CCLabelBMFont")
+		.def_static("create", py::overload_cast<char const*, char const*>(&CCLabelBMFont::create), py::arg("str"), py::arg("fntFile"), py::return_value_policy::reference)
+		.def_static("create", py::overload_cast<>(&CCLabelBMFont::create), py::return_value_policy::reference);
+	
+	py::class_<CCMenu, CCLayerRGBA>(m, "CCMenu")
+		.def_static("create", py::overload_cast<>(&CCMenu::create));
+	
+	py::class_<CCMenuItem, CCNodeRGBA>(m, "CCMenuItem")
+		.def_static("create", py::overload_cast<>(&CCMenuItem::create))
+		.def_static("create", py::overload_cast<CCObject*, SEL_MenuHandler>(&CCMenuItem::create), py::arg("rec"), py::arg("selector"));
+	
+	py::class_<CCMenuItemSprite, CCMenuItem>(m, "CCMenuItemSprite")
+		.def_static("create", py::overload_cast<CCNode*, CCNode*, CCNode*>(&CCMenuItemSprite::create), py::arg("normalSprite"), py::arg("selectedSprite"), py::arg("disabledSprite"), py::return_value_policy::reference)
+		.def_static("create", py::overload_cast<CCNode*, CCNode*, CCNode*, CCObject*, SEL_MenuHandler>(&CCMenuItemSprite::create), py::arg("normalSprite"), py::arg("selectedSprite"), py::arg("disabledSprite"), py::arg("target"), py::arg("selector"), py::return_value_policy::reference)
+		.def_static("create", py::overload_cast<CCNode*, CCNode*, CCObject*, SEL_MenuHandler>(&CCMenuItemSprite::create), py::arg("normalSprite"), py::arg("selectedSprite"), py::arg("target"), py::arg("selector")), py::return_value_policy::reference;
+	
+	py::class_<CCMenuItemSpriteExtra, CCMenuItemSprite>(m, "CCMenuItemSpriteExtra")
+		.def_static("create", py::overload_cast<CCNode*, CCNode*, CCObject*, SEL_MenuHandler>(&CCMenuItemSpriteExtra::create), py::arg("sprite"), py::arg("disabledSprite"), py::arg("target"), py::arg("callback"), py::return_value_policy::reference)
+		.def_static("create", py::overload_cast<CCNode*, CCObject*, SEL_MenuHandler>(&CCMenuItemSpriteExtra::create), py::arg("sprite"), py::arg("target"), py::arg("callback"));
+	
+	py::class_<CCMenuItemExt>(m, "CCMenuItemExt")
+		.def_static("createSpriteExtra", [](CCNode* sprite, std::function<void(CCMenuItemSpriteExtra* sender)>&& callback) {
+			return CCMenuItemExt::createSpriteExtra(sprite, callback);
+		}, py::return_value_policy::reference);
 }
+
 
 void Serpent::bindings::cocos::enums() {
 	py::enum_<CCObjectType>(m, "CCObjectType") // i actualy dont know why this exists but ill just bind it for the 2 people that want it!
