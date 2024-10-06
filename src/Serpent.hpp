@@ -8,6 +8,18 @@ type pyfn(class_ self, __VA_ARGS__) {                                           
 	return fn(self, ##__VA_ARGS__).cast<type>();                            	  \
 }                                                                                 \
 
+#define CREATE_HOOK_FOR(function, pyfn, address, convention)          \
+if (pybind11::globals().contains(#pyfn)) {                            \
+    auto result = Mod::get()->hook(                                   \
+        reinterpret_cast<void*>(address),                             \
+        &pyfn,                                                        \
+        #function,                                                    \
+        tulip::hook::TulipConvention::convention                      \
+    );                                                                \
+}                                                                     \
+
+#define GET_PY_FN(fn, type, ...) pybind11::globals()[fn](__VA_ARGS__).cast<type>()                  
+
 namespace Serpent {
 
 	extern pybind11::module m;

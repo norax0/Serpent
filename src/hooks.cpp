@@ -3,7 +3,11 @@
 using namespace geode::prelude;
 
 bool MenuLayer_init(MenuLayer* self) {
-    return pybind11::globals()["MenuLayer_init"](self).cast<bool>();
+    return GET_PY_FN("MenuLayer_init", bool, self);
+}
+
+void MenuLayer_onMoreGames(MenuLayer* self, CCObject* p0) {
+    return GET_PY_FN("MenuLayer_onMoreGames", void, self, p0);
 }
 
 namespace Serpent::hook {
@@ -11,19 +15,7 @@ namespace Serpent::hook {
 
     void initAllHooks() {
         log::info("Enabling hooks");
-        if (pybind11::globals().contains("MenuLayer_init")) {
-            auto result = Mod::get()->hook(
-                reinterpret_cast<void*>(geode::base::get() + 0x3130f0),
-                &MenuLayer_init,
-                "MenuLayer::init",
-                tulip::hook::TulipConvention::Thiscall
-            );
-
-            if (result.isErr()) {
-                log::error("An error occured enabling hook for MenuLayer::init: {}", result.err());
-            } else {
-                log::info("MenuLayer::init hook");
-            }
-        }
+        CREATE_HOOK_FOR(MenuLayer::init, MenuLayer_init, geode::base::get() + 0x3130f0, Default)
+        CREATE_HOOK_FOR(MenuLayer::onMoreGames, MenuLayer_onMoreGames, geode::base::get() + 0x314da0, Thiscall)
     }
 }

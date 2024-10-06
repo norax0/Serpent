@@ -27,6 +27,9 @@ def MenuLayer_init(this):
 	this.addChild(sprite)
 
 	return True
+
+def MenuLayer_onMoreGames(this, sender):
+	info("MenuLayer::onMoreGames hook SUCCESS")
 )");
 	Serpent::hook::initAllHooks();
 }
