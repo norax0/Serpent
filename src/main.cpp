@@ -2,6 +2,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/embed.h>
 #include <Geode/modify/MenuLayer.hpp>
+#include <Geode/modify/CCSprite.hpp>
 #include "Serpent.hpp"
 
 namespace py = pybind11;
@@ -16,17 +17,20 @@ $execute {
 	bindings::cocos::enums();
 	bindings::cocos::bind();
 	bindings::robtop::bind();
+	bindings::serpent::bind();
 
 	py::exec(R"(
-def callback(sender):
-	info("HI!!!!")
+script = script("testmod_yellowcat98")
 
-def MenuLayer_init(this):
+def callback(sender):
+	info(script.ID)
+
+def testmod_yellowcat98_MenuLayer_init(this):
 	if not this.init(): return False
 	director = CCDirector.get()
 	winSize = director.getWinSize()
 	info("hello")
-	menu = this.getChildByID("profile-menu")
+	menu = this.getChildByID("bottom-menu")
 
 	button = CCMenuItemExt.createSpriteExtra(CCSprite.createWithSpriteFrameName("GJ_arrow_01_001.png"), callback)
 
@@ -36,6 +40,10 @@ def MenuLayer_init(this):
 		info("button is true")
 		menu.addChild(button)
 	return True
+
+def testmod_yellowcat98_MenuLayer_onMoreGames(this):
+	info("hi")
+
+script.initAllHooks()
 )");
-	Serpent::hook::initAllHooks();
 }

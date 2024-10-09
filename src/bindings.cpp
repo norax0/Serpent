@@ -212,5 +212,13 @@ void Serpent::bindings::robtop::bind() {
 
 	py::class_<MenuLayer, CCLayer, GooglePlayDelegate>(m, "MenuLayer")
 		.def_static("scene", py::overload_cast<bool>(&MenuLayer::scene))
-		.def("init", py::overload_cast<>(&MenuLayer::init));
+		.def("init", py::overload_cast<>(&MenuLayer::init))
+		.def("onMoreGames", py::overload_cast<CCObject*>(&MenuLayer::onMoreGames));
+}
+
+void Serpent::bindings::serpent::bind() {
+	py::class_<script>(m, "script")
+		.def(py::init<const std::string&>(), py::return_value_policy::reference)
+		.def_readwrite("ID", &script::ID)
+		.def("initAllHooks", py::overload_cast<>(&script::initAllHooks)); // enables all Hooks!
 }
