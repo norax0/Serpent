@@ -19,6 +19,18 @@ $execute {
 	bindings::robtop::bind();
 	bindings::serpent::bind();
 
+	auto ScriptsDirectoryResult = geode::utils::file::createDirectory(Mod::get()->getConfigDir() / "scripts");
+	if (ScriptsDirectoryResult.isErr()) {
+		log::error("There was an error creating the scripts directory: {}", ScriptsDirectoryResult.err());
+	}
+
+	auto scripts = Mod::get()->getConfigDir() / "scripts";
+
+	for (const auto& scriptPath : std::filesystem::directory_iterator(scripts)) {
+		auto scriptResult = geode::utils::file::readString(scriptPath.path());
+		py::exec(scriptResult.value());
+	}
+/*
 	py::exec(R"(
 script = script("testmod_yellowcat98")
 
@@ -45,5 +57,7 @@ def testmod_yellowcat98_MenuLayer_onMoreGames(this):
 	info("hi")
 
 script.initAllHooks()
+script.initAllHooks()
 )");
+*/
 }
