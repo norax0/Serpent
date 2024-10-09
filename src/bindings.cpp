@@ -218,7 +218,7 @@ void Serpent::bindings::robtop::bind() {
 
 void Serpent::bindings::serpent::bind() {
 	py::class_<script>(m, "script")
-		.def(py::init<const std::string&>(), py::return_value_policy::reference)
+		.def(py::init<const std::string&, py::object>(), py::return_value_policy::reference)
 		.def_readwrite("ID", &script::ID)
 		.def("initAllHooks", py::overload_cast<>(&script::initAllHooks)); // enables all Hooks!
 }

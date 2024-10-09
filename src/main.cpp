@@ -19,45 +19,31 @@ $execute {
 	bindings::robtop::bind();
 	bindings::serpent::bind();
 
-	auto ScriptsDirectoryResult = geode::utils::file::createDirectory(Mod::get()->getConfigDir() / "scripts");
-	if (ScriptsDirectoryResult.isErr()) {
-		log::error("There was an error creating the scripts directory: {}", ScriptsDirectoryResult.err());
-	}
+	//auto ScriptsDirectoryResult = geode::utils::file::createDirectory(Mod::get()->getConfigDir() / "scripts");
+	//if (ScriptsDirectoryResult.isErr()) {
+	//	log::error("There was an error creating the scripts directory: {}", ScriptsDirectoryResult.err());
+	//}
 
-	auto scripts = Mod::get()->getConfigDir() / "scripts";
+	//auto scripts = Mod::get()->getConfigDir() / "scripts";
 
-	for (const auto& scriptPath : std::filesystem::directory_iterator(scripts)) {
-		auto scriptResult = geode::utils::file::readString(scriptPath.path());
-		py::exec(scriptResult.value());
-	}
-/*
+	//for (const auto& scriptPath : std::filesystem::directory_iterator(scripts)) {
+	//	auto scriptResult = geode::utils::file::readString(scriptPath.path());
+	//	log::info("\nscript generated: {}", scriptResult.value());
+	//	py::exec(scriptResult.value());
+	//}
+
 	py::exec(R"(
-script = script("testmod_yellowcat98")
+class testmod_yellowcat98:
+	def __init__(self):
+		self.script = script("testmod_yellowcat98", self)
+		self.script.initAllHooks()
 
-def callback(sender):
-	info(script.ID)
+	def MenuLayer_init(self, this):
+		if not this.init(): return False
+		info("Hook!!!!!!!!!!")
+		return True
 
-def testmod_yellowcat98_MenuLayer_init(this):
-	if not this.init(): return False
-	director = CCDirector.get()
-	winSize = director.getWinSize()
-	info("hello")
-	menu = this.getChildByID("bottom-menu")
-
-	button = CCMenuItemExt.createSpriteExtra(CCSprite.createWithSpriteFrameName("GJ_arrow_01_001.png"), callback)
-
-	if not button:
-		error("button is false")
-	else:
-		info("button is true")
-		menu.addChild(button)
-	return True
-
-def testmod_yellowcat98_MenuLayer_onMoreGames(this):
-	info("hi")
-
-script.initAllHooks()
-script.initAllHooks()
+testmod_yellowcat98()
 )");
-*/
+
 }

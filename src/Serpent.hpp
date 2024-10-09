@@ -3,25 +3,33 @@
 #include <pybind11/functional.h>
 #include <Geode/Geode.hpp>
 
-#define CREATE_HOOK_FOR(function, pyfn, wrapperName, address, convention, returnName, body)                \
-if (pybind11::globals().contains(pyfn)) {                                                                  \
-	auto returnName = Mod::get()->hook(                                                                    \
-        reinterpret_cast<void*>(address),                                                                  \
-        &wrapperName,                                                                                      \
-        function,                                                                                          \
-        tulip::hook::TulipConvention::convention                                                           \
-    );                                                                                                     \
-	body                                                                                                   \
-}                                                                                                          \
+#define CREATE_HOOK_FOR(pyclass, fn, pyfn, wrapperName, address, convention, returnName, body)           \
+if (pybind11::hasattr(pyclass, pyfn)) {                                                                        \
+	auto func = pyclass.attr(pyfn);                                                                            \
+	if (pybind11::isinstance<pybind11::function>(func)) {                                                      \
+		auto returnName = Mod::get()->hook(                                                                    \
+    		reinterpret_cast<void*>(address),                                                                  \
+    	    &wrapperName,                                                                                      \
+    	    fn,                                                                                          \
+    	    tulip::hook::TulipConvention::convention                                                           \
+    	);                                                                                                     \
+		body                                                                                                   \
+	} else { \
+		log::info("is no function!"); \
+	}                                                                                                           \
+} else {\
+	log::info("no hook eabled!");\
+}                                                                  \
 
-#define CREATE_HOOK_WITH_CHECK_FOR(function, pyfn, wrapperName, address, convention, returnName)           \
-CREATE_HOOK_FOR(function, pyfn, wrapperName, address, convention, returnName,                              \
+
+#define CREATE_HOOK_WITH_CHECK_FOR(pyclass, function, pyfn, wrapperName, address, convention, returnName)  \
+CREATE_HOOK_FOR(pyclass, function, pyfn, wrapperName, address, convention, returnName,                     \
 	if (returnName.isErr()) {                                                                              \
 		log::error("Error enabling {} hook.", function);                                                   \
 	}                                                                                                      \
 )                                                                                                          \
 
-#define GET_PY_FN(fn, type, ...) pybind11::globals()[fn](__VA_ARGS__).cast<type>()                  
+#define GET_PY_FN(pyclass, fn, type, ...) pyclass.attr(fn)(__VA_ARGS__).cast<type>()                  
 
 namespace Serpent {
 
@@ -53,15 +61,11 @@ namespace Serpent {
 		};
 	}
 
-	namespace wrappers {
-		bool MenuLayer_init(MenuLayer* self);
-		void MenuLayer_onMoreGames(MenuLayer* self, cocos2d::CCObject* p0);
-	}
-
 	class script {
 	public:
 		std::string ID;
-		script(const std::string& scriptID) : ID(scriptID) {
+		pybind11::object mainClass;
+		script(const std::string& scriptID, pybind11::object obj) : ID(scriptID), mainClass(obj) {
 			wrapper::setParent(this);
 		}
 		void initAllHooks();
