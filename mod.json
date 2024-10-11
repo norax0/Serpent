@@ -11,5 +11,6 @@
 	"version": "v1.0.0",
 	"developer": "YellowCat98",
 	"description": "Run python scripts within GD.",
+	"early-load": true,
 	"tags": ["modtober24", "developer"]
 }

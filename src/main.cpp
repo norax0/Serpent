@@ -19,19 +19,21 @@ $execute {
 	bindings::robtop::bind();
 	bindings::serpent::bind();
 
-	//auto ScriptsDirectoryResult = geode::utils::file::createDirectory(Mod::get()->getConfigDir() / "scripts");
-	//if (ScriptsDirectoryResult.isErr()) {
-	//	log::error("There was an error creating the scripts directory: {}", ScriptsDirectoryResult.err());
-	//}
+	auto ScriptsDirectoryResult = geode::utils::file::createDirectory(Mod::get()->getConfigDir() / "scripts");
+	if (ScriptsDirectoryResult.isErr()) {
+		log::error("There was an error creating the scripts directory: {}", ScriptsDirectoryResult.err());
+	}
 
-	//auto scripts = Mod::get()->getConfigDir() / "scripts";
+	auto scripts = Mod::get()->getConfigDir() / "scripts";
 
-	//for (const auto& scriptPath : std::filesystem::directory_iterator(scripts)) {
-	//	auto scriptResult = geode::utils::file::readString(scriptPath.path());
-	//	log::info("\nscript generated: {}", scriptResult.value());
-	//	py::exec(scriptResult.value());
-	//}
+	
 
+	for (const auto& script : std::filesystem::directory_iterator(scripts)) {
+		auto scriptResult = geode::utils::file::readString(script.path());
+		log::info("Executing script {}", script.path().filename().stem());
+		py::exec(scriptResult.value());
+	}
+/*
 	py::exec(R"(
 class testmod_yellowcat98:
 	def __init__(self):
@@ -43,7 +45,8 @@ class testmod_yellowcat98:
 		info("Hook!!!!!!!!!!")
 		return True
 
-testmod_yellowcat98()
-)");
+if __name__ == "__main__":
+	testmod_yellowcat98()
+)");*/
 
 }

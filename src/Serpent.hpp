@@ -3,23 +3,19 @@
 #include <pybind11/functional.h>
 #include <Geode/Geode.hpp>
 
-#define CREATE_HOOK_FOR(pyclass, fn, pyfn, wrapperName, address, convention, returnName, body)           \
+#define CREATE_HOOK_FOR(pyclass, fn, pyfn, wrapperName, address, convention, returnName, body)                 \
 if (pybind11::hasattr(pyclass, pyfn)) {                                                                        \
 	auto func = pyclass.attr(pyfn);                                                                            \
 	if (pybind11::isinstance<pybind11::function>(func)) {                                                      \
 		auto returnName = Mod::get()->hook(                                                                    \
     		reinterpret_cast<void*>(address),                                                                  \
     	    &wrapperName,                                                                                      \
-    	    fn,                                                                                          \
+    	    fn,                                                                                                \
     	    tulip::hook::TulipConvention::convention                                                           \
     	);                                                                                                     \
 		body                                                                                                   \
-	} else { \
-		log::info("is no function!"); \
-	}                                                                                                           \
-} else {\
-	log::info("no hook eabled!");\
-}                                                                  \
+	}                                                                                                          \
+}                                                                                                              \
 
 
 #define CREATE_HOOK_WITH_CHECK_FOR(pyclass, function, pyfn, wrapperName, address, convention, returnName)  \
@@ -62,22 +58,23 @@ namespace Serpent {
 	}
 
 	class script {
-	public:
-		std::string ID;
-		pybind11::object mainClass;
-		script(const std::string& scriptID, pybind11::object obj) : ID(scriptID), mainClass(obj) {
-			wrapper::setParent(this);
-		}
-		void initAllHooks();
 	private:
 		struct wrapper {
 			static script* instance;
-
 			static void setParent(script* parent) {
 				instance = parent;
 			}
 			static bool MenuLayer_init(MenuLayer* self);
 			static void MenuLayer_onMoreGames(MenuLayer* self, cocos2d::CCObject* p0);
 		};
+	
+	public:
+		std::string ID;
+		pybind11::object mainClass;
+		script(const std::string& scriptID, pybind11::object obj) : ID(scriptID), mainClass(obj) {
+			wrapper::setParent(this);
+
+		}
+		void initAllHooks();
 	};
 }

@@ -79,6 +79,13 @@ void Serpent::bindings::cocos::bind() {
 		.def_readwrite("g", &ccColor3B::g)
 		.def_readwrite("g", &ccColor3B::b);
 
+	py::class_<ccColor4B>(m, "ccColor4B")
+		.def(py::init<>())
+		.def_readwrite("r", &ccColor4B::r)
+		.def_readwrite("g", &ccColor4B::g)
+		.def_readwrite("g", &ccColor4B::b)
+		.def_readwrite("a", &ccColor4B::a);
+
 	py::class_<CCDirector>(m, "CCDirector")
 		.def_static("get", py::overload_cast<>(&CCDirector::get), py::return_value_policy::reference)
 		.def("getWinSize", py::overload_cast<>(&CCDirector::getWinSize));
@@ -195,6 +202,10 @@ void Serpent::bindings::cocos::bind() {
 		.def_static("createSpriteExtra", [](CCNode* sprite, std::function<void(CCMenuItemSpriteExtra* sender)>&& callback) {
 			return CCMenuItemExt::createSpriteExtra(sprite, callback);
 		}, py::return_value_policy::reference);
+	
+	py::class_<CCLayerColor, CCLayerRGBA>(m, "CCLayerColor")
+		.def_static("create", py::overload_cast<>(&CCLayerColor::create), py::return_value_policy::reference)
+		.def_static("create", py::overload_cast<ccColor4B const&>(&CCLayerColor::create), py::arg("color"), py::return_value_policy::reference);
 }
 
 
@@ -214,6 +225,15 @@ void Serpent::bindings::robtop::bind() {
 		.def_static("scene", py::overload_cast<bool>(&MenuLayer::scene))
 		.def("init", py::overload_cast<>(&MenuLayer::init))
 		.def("onMoreGames", py::overload_cast<CCObject*>(&MenuLayer::onMoreGames));
+	
+	py::class_<FLAlertLayerProtocol>(m, "FLAlertLayerProtocol")
+		.def("FLAlert_Clicked", py::overload_cast<FLAlertLayer*, bool>(&FLAlertLayerProtocol::FLAlert_Clicked));
+
+	py::class_<FLAlertLayer, CCLayerColor>(m, "FLAlertLayer")
+		.def_static("create", py::overload_cast<FLAlertLayerProtocol*, char const*, std::string, char const*, char const*, float, bool, float, float>(&FLAlertLayer::create), py::arg("delegate"), py::arg("title"), py::arg("desc"), py::arg("btn1"), py::arg("btn2"), py::arg("width"), py::arg("scroll"), py::arg("height"), py::arg("textScale"), py::return_value_policy::reference) // why.
+		.def_static("create", py::overload_cast<FLAlertLayerProtocol*, char const*, std::string, char const*, char const*, float>(&FLAlertLayer::create), py::arg("delegate"), py::arg("title"), py::arg("desc"), py::arg("btn1"), py::arg("btn2"), py::arg("width"), py::return_value_policy::reference)
+		.def_static("create", py::overload_cast<FLAlertLayerProtocol*, char const*, std::string, char const*, char const*>(&FLAlertLayer::create), py::arg("delegate"), py::arg("title"), py::arg("desc"), py::arg("btn1"), py::arg("btn2"), py::return_value_policy::reference)
+		.def_static("create", py::overload_cast<char const*, std::string const&, char const*>(&FLAlertLayer::create), py::arg("title"), py::arg("desc"), py::arg("btn"), py::return_value_policy::reference);
 }
 
 void Serpent::bindings::serpent::bind() {
