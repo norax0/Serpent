@@ -1,13 +1,16 @@
 #include <Geode/Geode.hpp>
+#include <Geode/ui/GeodeUI.hpp>
 #include <pybind11/pybind11.h>
 #include <pybind11/embed.h>
 #include <Geode/modify/MenuLayer.hpp>
-#include <Geode/modify/CCSprite.hpp>
 #include "Serpent.hpp"
+#include "ui/ScriptsLayer.hpp"
 
 namespace py = pybind11;
 using namespace geode::prelude;
 using namespace Serpent;
+
+class ModItem;
 
 $execute {
 	py::initialize_interpreter();
@@ -25,8 +28,6 @@ $execute {
 	}
 
 	auto scripts = Mod::get()->getConfigDir() / "scripts";
-
-	
 
 	for (const auto& script : std::filesystem::directory_iterator(scripts)) {
 		auto scriptResult = geode::utils::file::readString(script.path());
@@ -50,3 +51,13 @@ if __name__ == "__main__":
 )");*/
 
 }
+
+class $modify(MenuLayer) {
+	bool init() {
+		if (!MenuLayer::init()) return false;
+		this->getChildByID("bottom-menu")->addChild(CCMenuItemExt::createSpriteExtra(CCSprite::createWithSpriteFrameName("GJ_arrow_01_001.png"), [=](CCObject* sender) {
+			ui::ScriptsLayer::create()->show();
+		}));
+		return true;
+	}
+};
