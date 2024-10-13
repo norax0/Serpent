@@ -4,6 +4,8 @@
 using namespace Serpent::ui;
 using namespace geode::prelude;
 
+
+// used `ModItem` to know what im doing while coding this node
 bool ScriptItem::init(matjson::Value json) {
     if (!CCNode::init()) return false;
     this->setID(fmt::format("script-item/{}", json["id"].as_string()));

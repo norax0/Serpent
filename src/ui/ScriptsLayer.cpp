@@ -1,42 +1,42 @@
 #include "ScriptsLayer.hpp"
 #include "ScriptItem.hpp"
+#include <format>
 
 using namespace geode::prelude;
 using namespace Serpent::ui;
 
 bool ScriptsLayer::setup() {
-    auto scroll = ScrollLayer::create(CCSize(200, 200));
-    auto idk = ScriptItem::create(matjson::parse(R"(
-{
-	"serpent": "1.0.0",
-	"name": "Test",
-	"id": "testmod_yellowcat98",
-	"version": "v1.0.0",
-	"developer": "YellowCat98"
-}
-)"));
+    scroll = ScrollLayer::create(CCSize(200, 250));
 
-    auto idk2 = ScriptItem::create(matjson::parse(R"(
-{
-	"serpent": "1.0.0",
-	"name": "Gyatt!",
-	"id": "gyatt_yellowcat98",
-	"developer": "YellowCat98"
-}
-)"));
     scroll->setPosition(winSize / 2);
     scroll->m_contentLayer->setLayout(
         ColumnLayout::create()
             ->setAxisReverse(true)
             ->setAxisAlignment(AxisAlignment::End)
-            ->setAutoGrowAxis(195.0f)
+            ->setAutoGrowAxis(250.0f)
             ->setGap(5.0f)
     );
-    
-    m_mainLayer->addChild(scroll);
-    scroll->m_contentLayer->addChild(idk);
-    scroll->m_contentLayer->addChild(idk2);
+
+    border = Border::create(scroll, {100, 45, 0, 255}, {200, 250});
+    m_mainLayer->addChild(border);
+
+
+    for (int i = 0; i < 20; i++) {
+        auto node = ScriptItem::create(matjson::parse(fmt::format(R"(
+{{
+	"serpent": "1.0.0",
+	"name": "{}",
+	"id": "gyatt_yellowcat98",
+	"developer": "YellowCat98"
+}}
+)", i)));
+        scroll->m_contentLayer->addChild(node);
+        
+    }
+
     scroll->m_contentLayer->updateLayout();
+    scroll->updateLayout();
+    scroll->scrollToTop();
     return true;
 }
 

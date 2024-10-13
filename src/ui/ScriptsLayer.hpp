@@ -9,6 +9,8 @@ namespace Serpent::ui {
     private:
         bool setup() override;
         bool init();
+        geode::ScrollLayer* scroll;
+        geode::Border* border;
         cocos2d::CCSize winSize;
     };
 }
