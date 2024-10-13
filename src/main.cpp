@@ -65,7 +65,7 @@ class $modify(MenuLayer) {
 	"serpent": "1.0.0",
 	"name": "Test",
 	"id": "testmod_yellowcat98",
-	"version": "1.0.0",
+	"version": "v1.0.0",
 	"developer": "YellowCat98"
 }
 )")));
