@@ -12,5 +12,10 @@
 	"developer": "YellowCat98",
 	"description": "Run python scripts within GD.",
 	"early-load": true,
-	"tags": ["modtober24", "developer"]
+	"tags": ["modtober24", "developer"],
+	"resources": {
+		"sprites": [
+			"resources/*.png"
+		]
+	}
 }

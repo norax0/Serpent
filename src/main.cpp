@@ -56,7 +56,7 @@ if __name__ == "__main__":
 class $modify(MenuLayer) {
 	bool init() {
 		if (!MenuLayer::init()) return false;
-		this->getChildByID("bottom-menu")->addChild(CCMenuItemExt::createSpriteExtra(CCSprite::createWithSpriteFrameName("GJ_arrow_01_001.png"), [=](CCObject* sender) {
+		this->getChildByID("bottom-menu")->addChild(CCMenuItemExt::createSpriteExtra(geode::CircleButtonSprite::createWithSprite("PyBtn.png"_spr, 1.0f, CircleBaseColor::Green, CircleBaseSize::MediumAlt), [=](CCObject* sender) {
 			ui::ScriptsLayer::create()->show();
 		}));
 		return true;
