@@ -19,9 +19,8 @@ bool ScriptsLayer::setup() {
     auto idk2 = ScriptItem::create(matjson::parse(R"(
 {
 	"serpent": "1.0.0",
-	"name": "Test",
-	"id": "testmod_yellowcat98",
-	"version": "v1.0.0",
+	"name": "Gyatt!",
+	"id": "gyatt_yellowcat98",
 	"developer": "YellowCat98"
 }
 )"));

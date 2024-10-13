@@ -38,7 +38,7 @@ bool ScriptItem::init(matjson::Value json) {
     title->setAnchorPoint({0.5f, 1.0f});
     title->setLayout(
         RowLayout::create()
-            ->setDefaultScaleLimits(0.1f, 1.0f)
+            //->setDefaultScaleLimits(0.1f, 1.0f)
             ->setAxisAlignment(AxisAlignment::Start)
     );
 
@@ -70,13 +70,6 @@ bool ScriptItem::init(matjson::Value json) {
     titleLabel->setLayoutOptions(AxisLayoutOptions::create()->setScalePriority(1));
     title->addChild(titleLabel);
 
-    version = CCLabelBMFont::create(json["version"].as_string().c_str(), "bigFont.fnt");
-    version->setID("version-label");
-    version->setColor({ 0, 255, 255 });
-    version->setLayoutOptions(AxisLayoutOptions::create()->setScaleLimits(std::nullopt, 0.7f));
-
-    title->addChild(version);
-
 
 
     title->setContentWidth((titleSpace.width) / mainContainer->getScale());
@@ -91,7 +84,6 @@ bool ScriptItem::init(matjson::Value json) {
     this->addChild(mainContainer);
     mainContainer->updateLayout();
     title->updateLayout();
-    version->updateLayout();
     devContainer->updateLayout();
     this->updateLayout();
     return true;

@@ -11,7 +11,6 @@ namespace Serpent::ui {
         cocos2d::CCNode* title;
         cocos2d::CCNode* mainContainer;
         cocos2d::CCLabelBMFont* titleLabel;
-        cocos2d::CCLabelBMFont* version;
         cocos2d::CCMenu* devContainer;
         cocos2d::CCLabelBMFont* dev;
         bool init(matjson::Value json);
