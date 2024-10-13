@@ -34,6 +34,13 @@ bool ScriptsLayer::setup() {
         
     }
 
+    border->setPosition(
+        {
+            (m_bgSprite->getPositionX() - (m_bgSprite->getContentWidth() * m_bgSprite->getAnchorPoint().x)) + 10,
+            m_bgSprite->getPositionY() - 130
+        }
+    );
+
     scroll->m_contentLayer->updateLayout();
     scroll->updateLayout();
     scroll->scrollToTop();
