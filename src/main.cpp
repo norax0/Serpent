@@ -5,6 +5,7 @@
 #include <Geode/modify/MenuLayer.hpp>
 #include "Serpent.hpp"
 #include "ui/ScriptsLayer.hpp"
+#include "ui/ScriptItem.hpp"
 
 namespace py = pybind11;
 using namespace geode::prelude;
@@ -58,6 +59,16 @@ class $modify(MenuLayer) {
 		this->getChildByID("bottom-menu")->addChild(CCMenuItemExt::createSpriteExtra(CCSprite::createWithSpriteFrameName("GJ_arrow_01_001.png"), [=](CCObject* sender) {
 			ui::ScriptsLayer::create()->show();
 		}));
+
+		this->addChild(ui::ScriptItem::create(matjson::parse(R"(
+{
+	"serpent": "1.0.0",
+	"name": "Test",
+	"id": "testmod_yellowcat98",
+	"version": "1.0.0",
+	"developer": "YellowCat98"
+}
+)")));
 		return true;
 	}
 };

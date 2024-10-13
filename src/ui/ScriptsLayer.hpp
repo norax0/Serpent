@@ -1,5 +1,6 @@
+#pragma once
 #include <Geode/Geode.hpp>
-
+#include "Serpent.hpp"
 
 namespace Serpent::ui {
     class ScriptsLayer : public geode::Popup<> {
