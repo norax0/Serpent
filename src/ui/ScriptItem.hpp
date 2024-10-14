@@ -13,8 +13,9 @@ namespace Serpent::ui {
         cocos2d::CCLabelBMFont* titleLabel;
         cocos2d::CCMenu* devContainer;
         cocos2d::CCLabelBMFont* dev;
-        bool init(matjson::Value json);
+        cocos2d::CCMenu* viewMenu;
+        bool init(matjson::Value json, std::function<void(cocos2d::CCObject*)> onButton);
     public:
-        static ScriptItem* create(matjson::Value);
+        static ScriptItem* create(matjson::Value, std::function<void(cocos2d::CCObject*)> onButton);
     };
 }

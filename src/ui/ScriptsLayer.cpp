@@ -29,7 +29,9 @@ bool ScriptsLayer::setup() {
 	"id": "gyatt_yellowcat98",
 	"developer": "YellowCat98"
 }}
-)", i)));
+)", i)), [=](CCObject* sender) {
+    log::info("one of em!");
+});
         scroll->m_contentLayer->addChild(node);
         
     }

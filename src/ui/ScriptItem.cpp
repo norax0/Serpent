@@ -6,7 +6,7 @@ using namespace geode::prelude;
 
 
 // used `ModItem` to know what im doing while coding this node
-bool ScriptItem::init(matjson::Value json) {
+bool ScriptItem::init(matjson::Value json, std::function<void(CCObject*)> onButton) {
     if (!CCNode::init()) return false;
     this->setID(fmt::format("script-item/{}", json["id"].as_string()));
     
@@ -72,8 +72,6 @@ bool ScriptItem::init(matjson::Value json) {
     titleLabel->setLayoutOptions(AxisLayoutOptions::create()->setScalePriority(1));
     title->addChild(titleLabel);
 
-
-
     title->setContentWidth((titleSpace.width) / mainContainer->getScale());
 
     devContainer->setContentWidth({titleSpace.width / mainContainer->getScale()});
@@ -82,18 +80,38 @@ bool ScriptItem::init(matjson::Value json) {
     mainContainer->setContentSize(ccp(titleSpace.width, titleSpace.height) / mainContainer->getScale());
 
     
+    viewMenu = CCMenu::create();
+    viewMenu->setID("view-menu");
+    viewMenu->setAnchorPoint({1.0f, 0.5f});
+    viewMenu->setScale(0.4f);
+    auto sprite = ButtonSprite::create("View", "bigFont.fnt", "geode.loader/GE_button_05.png");
+    
+
+    auto viewBtn = CCMenuItemExt::createSpriteExtra(sprite, onButton);
+    viewMenu->addChild(viewBtn);
+
+    viewMenu->setLayout(
+        RowLayout::create()
+            ->setAxisReverse(true)
+            ->setAxisAlignment(AxisAlignment::End)
+            ->setGap(10)
+    );
+    
+
     this->addChild(bg);
     this->addChild(mainContainer);
+    this->addChildAtPosition(viewMenu, Anchor::Right, ccp(-10, 0));
     mainContainer->updateLayout();
     title->updateLayout();
     devContainer->updateLayout();
+    viewMenu->updateLayout();
     this->updateLayout();
     return true;
 }
 
-ScriptItem* ScriptItem::create(matjson::Value json) {
+ScriptItem* ScriptItem::create(matjson::Value json, std::function<void(CCObject*)> onButton) {
     auto ret = new ScriptItem();
-    if (ret->init(json)) {
+    if (ret->init(json, onButton)) {
         ret->autorelease();
         return ret;
     }
