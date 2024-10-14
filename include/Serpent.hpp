@@ -70,11 +70,25 @@ namespace Serpent {
 	
 	public:
 		std::string ID;
+		std::string name;
+		std::string developer;
 		pybind11::object mainClass;
 		script(const std::string& scriptID, pybind11::object obj) : ID(scriptID), mainClass(obj) {
 			wrapper::setParent(this);
 
 		}
 		void initAllHooks();
+		void info(const std::string& str) {
+			geode::log::info("[{}]: {}", name, str);
+		}
+		void warn(const std::string& str) {
+			geode::log::warn("[{}]: {}", name, str);
+		}
+		void debug(const std::string& str) {
+			geode::log::debug("[{}]: {}", name, str);
+		}
+		void error(const std::string& str) {
+			geode::log::error("[{}]: {}", name, str);
+		}
 	};
 }

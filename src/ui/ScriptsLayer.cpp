@@ -1,6 +1,5 @@
 #include "ScriptsLayer.hpp"
 #include "ScriptItem.hpp"
-#include <format>
 
 using namespace geode::prelude;
 using namespace Serpent::ui;
@@ -18,7 +17,25 @@ bool ScriptsLayer::setup() {
     );
 
     border = Border::create(scroll, {100, 45, 0, 255}, {200, 250});
+
+    border->setPosition(
+        {
+            (m_bgSprite->getPositionX() - (m_bgSprite->getContentWidth() * m_bgSprite->getAnchorPoint().x)) + 10,
+            m_bgSprite->getPositionY() - 130
+        }
+    );
+
     m_mainLayer->addChild(border);
+
+    scriptView = MDTextArea::create("```print('hello world')```", {m_bgSprite->getContentWidth() - border->getContentWidth() - 20, 250});
+
+    scriptView->setPosition(
+        {
+            border->getPositionX() + 325,
+            border->getPositionY() + 125
+        }
+    );
+    m_mainLayer->addChild(scriptView);
 
 
     for (int i = 0; i < 20; i++) {
@@ -30,18 +47,11 @@ bool ScriptsLayer::setup() {
 	"developer": "YellowCat98"
 }}
 )", i)), [=](CCObject* sender) {
-    log::info("one of em!");
+    scriptView->setString(fmt::format("Script number {}", i).c_str());
 });
         scroll->m_contentLayer->addChild(node);
         
     }
-
-    border->setPosition(
-        {
-            (m_bgSprite->getPositionX() - (m_bgSprite->getContentWidth() * m_bgSprite->getAnchorPoint().x)) + 10,
-            m_bgSprite->getPositionY() - 130
-        }
-    );
 
     scroll->m_contentLayer->updateLayout();
     scroll->updateLayout();

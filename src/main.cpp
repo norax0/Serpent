@@ -26,14 +26,25 @@ $execute {
 	auto ScriptsDirectoryResult = geode::utils::file::createDirectory(Mod::get()->getConfigDir() / "scripts");
 	if (ScriptsDirectoryResult.isErr()) {
 		log::error("There was an error creating the scripts directory: {}", ScriptsDirectoryResult.err());
+		return;
 	}
 
 	auto scripts = Mod::get()->getConfigDir() / "scripts";
 
+	auto unzippedDir = geode::utils::file::createDirector(Mod::get()->getConfigDir() / "unzipped");
+	if (unzippedDir.isErr()) {
+		log::error("There was an error creating the `unzipped` directory: {}", unzippedDir.err());
+		return;
+	}
+
 	for (const auto& script : std::filesystem::directory_iterator(scripts)) {
-		auto scriptResult = geode::utils::file::readString(script.path());
-		log::info("Executing script {}", script.path().filename().stem());
-		py::exec(scriptResult.value());
+		if (script.path().extension() == "zip") {
+			auto scriptResult = geode::utils::file::readString(script.path());
+			log::info("Executing script {}", script.path().filename().stem());
+			py::exec(scriptResult.value());
+		} else {
+			log::warn("a file that doesn't have a .zip extension was found in {}", scripts.string());
+		}
 	}
 /*
 	py::exec(R"(

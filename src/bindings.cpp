@@ -17,22 +17,6 @@ void Serpent::bindings::_geode::bind() {
 		.def("show", &Notification::show)
 		.def("cancel", &Notification::cancel)
 		.def("hide", &Notification::hide);
-	
-	m.def("info", [=](const std::string& str) {
-		log::info("{}", str);
-	});
-
-	m.def("debug", [=](const std::string& str) {
-		log::debug("{}", str);
-	});
-
-	m.def("warn", [=](const std::string& str) {
-		geode::log::warn("{}", str);
-	});
-
-	m.def("error", [=](const std::string& str) {
-		geode::log::error("{}", str);
-	});
 }
 
 void Serpent::bindings::_geode::enums() {
@@ -240,5 +224,9 @@ void Serpent::bindings::serpent::bind() {
 	py::class_<script>(m, "script")
 		.def(py::init<const std::string&, py::object>(), py::return_value_policy::reference)
 		.def_readwrite("ID", &script::ID)
-		.def("initAllHooks", py::overload_cast<>(&script::initAllHooks)); // enables all Hooks!
+		.def("initAllHooks", py::overload_cast<>(&script::initAllHooks)) // enables all Hooks!
+		.def("info", py::overload_cast<const std::string&>(&script::info))
+		.def("warn", py::overload_cast<const std::string&>(&script::warn))
+		.def("debug", py::overload_cast<const std::string&>(&script::debug))
+		.def("error", py::overload_cast<const std::string&>(&script::error));
 }

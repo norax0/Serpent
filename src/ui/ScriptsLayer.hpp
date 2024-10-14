@@ -11,6 +11,7 @@ namespace Serpent::ui {
         bool init();
         geode::ScrollLayer* scroll;
         geode::Border* border;
+        geode::MDTextArea* scriptView;
         cocos2d::CCSize winSize;
     };
 }
