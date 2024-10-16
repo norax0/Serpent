@@ -3,6 +3,7 @@
 #include <pybind11/functional.h>
 #include <Geode/Geode.hpp>
 
+
 #define CREATE_HOOK_FOR(pyclass, fn, pyfn, wrapperName, address, convention, returnName, body)                 \
 if (pybind11::hasattr(pyclass, pyfn)) {                                                                        \
 	auto func = pyclass.attr(pyfn);                                                                            \
@@ -25,7 +26,14 @@ CREATE_HOOK_FOR(pyclass, function, pyfn, wrapperName, address, convention, retur
 	}                                                                                                      \
 )                                                                                                          \
 
-#define GET_PY_FN(pyclass, fn, type, ...) pyclass.attr(fn)(__VA_ARGS__).cast<type>()                  
+#define GET_PY_FN(pyclass, fn, type, ...) pyclass.attr(fn)(__VA_ARGS__).cast<type>()
+
+#define CREATE_WRAPPER_FOR(pyclass, fn, type, args, ...) \
+type script::wrapper::fn(__VA_ARGS__) { \
+	return GET_PY_FN(pyclass, #fn, type, args); \
+} \
+
+#define ARGS(...) __VA_ARGS__
 
 namespace Serpent {
 
