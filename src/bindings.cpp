@@ -224,9 +224,11 @@ void Serpent::bindings::serpent::bind() {
 	py::class_<script>(m, "script")
 		.def(py::init<const std::string&, py::object>(), py::return_value_policy::reference)
 		.def_readwrite("ID", &script::ID)
+		.def_readwrite("name", &script::name)
+		.def_readwrite("developer", &script::developer)
 		.def("initAllHooks", py::overload_cast<>(&script::initAllHooks)) // enables all Hooks!
-		.def("info", py::overload_cast<const std::string&>(&script::info))
-		.def("warn", py::overload_cast<const std::string&>(&script::warn))
-		.def("debug", py::overload_cast<const std::string&>(&script::debug))
-		.def("error", py::overload_cast<const std::string&>(&script::error));
+		.def("info", py::overload_cast<std::string const&>(&script::info))
+		.def("warn", py::overload_cast<std::string const&>(&script::warn))
+		.def("debug", py::overload_cast<std::string const&>(&script::debug))
+		.def("error", py::overload_cast<std::string const&>(&script::error));
 }

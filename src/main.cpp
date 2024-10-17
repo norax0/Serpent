@@ -11,6 +11,39 @@ namespace py = pybind11;
 using namespace geode::prelude;
 using namespace Serpent;
 
+void unzipAndExecute(std::filesystem::path scripts) {
+	auto unzippedDirRes = geode::utils::file::createDirectory(Mod::get()->getConfigDir() / "unzipped");
+	if (unzippedDirRes.isErr()) {
+		log::error("There was an error creating the `unzipped` directory: {}", unzippedDirRes.err());
+		return;
+	}
+
+	auto unzipped = Mod::get()->getConfigDir() / "unzipped";
+
+	for (const auto& script : std::filesystem::directory_iterator(scripts)) {
+		if (script.is_directory()) {
+			log::info("{} is a folder. will be ignored.", script.path().filename().stem().string());
+			continue;
+		}
+		if (script.path().extension() == ".zip") {
+			auto scriptDir = unzipped / script.path().filename().stem();
+			log::info("Unzipping {}...", script.path().filename().stem());
+			auto zip = geode::utils::file::Unzip::create(script.path());
+			if (zip) {
+				auto ok = zip->extractAllTo(scriptDir);
+				if (ok) {
+					log::info("Unzipped {}!", script.path().filename().stem());
+					log::info("Now Executing {}...", script.path().filename().stem());
+					log::info("{}", geode::utils::file::readString(scriptDir / std::filesystem::path(script.path().filename().stem().string() + ".py")).value());
+					py::exec(py::str(geode::utils::file::readString(scriptDir / std::filesystem::path(script.path().filename().stem().string() + ".py")).value()));
+				}
+			}
+		} else {
+			log::warn("a file that doesn't have a .zip extension was found in {}", scripts.string());
+		}
+	}
+}
+
 $execute {
 	py::initialize_interpreter();
 	Serpent::initModule();
@@ -29,29 +62,7 @@ $execute {
 
 	auto scripts = Mod::get()->getConfigDir() / "scripts";
 
-	auto unzippedDirRes = geode::utils::file::createDirectory(Mod::get()->getConfigDir() / "unzipped");
-	if (unzippedDirRes.isErr()) {
-		log::error("There was an error creating the `unzipped` directory: {}", unzippedDirRes.err());
-		return;
-	}
-
-	auto unzipped = Mod::get()->getConfigDir() / "unzipped";
-
-	for (const auto& script : std::filesystem::directory_iterator(scripts)) {
-		if (script.path().extension() == ".zip") {
-			auto scriptDir = unzipped / script.path().filename().stem();
-			log::info("Unzipping {}", script.path().filename().stem());
-			auto zip = geode::utils::file::Unzip::create(script.path());
-			if (zip) {
-				auto ok = zip->extractAllTo(scriptDir);
-				if (ok) {
-					log::info("Unzipped {}", script.path().filename().stem());
-				}
-			}
-		} else {
-			log::warn("a file that doesn't have a .zip extension was found in {}", scripts.string());
-		}
-	}
+	unzipAndExecute(scripts);
 /*
 	py::exec(R"(
 class testmod_yellowcat98:
