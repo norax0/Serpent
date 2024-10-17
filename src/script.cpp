@@ -38,7 +38,12 @@ bool script::loadMetadata(const std::string& str) {
             name = json["name"].as_string();
             developer = json["developer"].as_string();
             serpentVer = json["serpent"].as_string();
+            return true;
+        } else {
+            return false;
         }
+    } else {
+        return false;
     }
 }
 
