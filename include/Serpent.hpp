@@ -85,6 +85,7 @@ namespace Serpent {
 		pybind11::object mainClass;
 		script(const std::string& scriptID, pybind11::object obj) : ID(scriptID), mainClass(obj) {
 			wrapper::setParent(this);
+			loadMetadata(getScriptJson());
 		}
 		void initAllHooks();
 		void info(const std::string& str) {

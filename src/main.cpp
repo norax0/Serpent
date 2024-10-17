@@ -89,9 +89,13 @@ if __name__ == "__main__":
 class $modify(MenuLayer) {
 	bool init() {
 		if (!MenuLayer::init()) return false;
-		this->getChildByID("bottom-menu")->addChild(CCMenuItemExt::createSpriteExtra(geode::CircleButtonSprite::createWithSprite("PyBtn.png"_spr, 1.0f, CircleBaseColor::Green, CircleBaseSize::MediumAlt), [=](CCObject* sender) {
+		auto menu = this->getChildByID("bottom-menu");
+		menu->addChild(CCMenuItemExt::createSpriteExtra(geode::CircleButtonSprite::createWithSprite("PyBtn.png"_spr, 1.0f, CircleBaseColor::Green, CircleBaseSize::MediumAlt), [=](CCObject* sender) {
 			ui::ScriptsLayer::create()->show();
 		}));
+		if (!Loader::get()->isModLoaded("alphalaneous.pages_api") || !Loader::get()->isModLoaded("alphalaneous.vanilla_pages")) {
+			menu->updateLayout();
+		}
 		return true;
 	}
 };
