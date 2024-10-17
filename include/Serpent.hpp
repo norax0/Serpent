@@ -80,10 +80,11 @@ namespace Serpent {
 		std::string ID;
 		std::string name;
 		std::string developer;
+		std::string scriptjson;
+		std::string serpentVer;
 		pybind11::object mainClass;
 		script(const std::string& scriptID, pybind11::object obj) : ID(scriptID), mainClass(obj) {
 			wrapper::setParent(this);
-
 		}
 		void initAllHooks();
 		void info(const std::string& str) {
@@ -98,5 +99,8 @@ namespace Serpent {
 		void error(const std::string& str) {
 			geode::log::error("[{}]: {}", name, str);
 		}
+		bool loadMetadata(const std::string& json);
+		bool CheckMetadata(matjson::Value json);
+		std::string getScriptJson();
 	};
 }

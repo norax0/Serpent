@@ -226,9 +226,12 @@ void Serpent::bindings::serpent::bind() {
 		.def_readwrite("ID", &script::ID)
 		.def_readwrite("name", &script::name)
 		.def_readwrite("developer", &script::developer)
+		.def_readwrite("serpentVer", &script::serpentVer)
 		.def("initAllHooks", py::overload_cast<>(&script::initAllHooks)) // enables all Hooks!
 		.def("info", py::overload_cast<std::string const&>(&script::info))
 		.def("warn", py::overload_cast<std::string const&>(&script::warn))
 		.def("debug", py::overload_cast<std::string const&>(&script::debug))
-		.def("error", py::overload_cast<std::string const&>(&script::error));
+		.def("error", py::overload_cast<std::string const&>(&script::error))
+		.def("loadMetadata", py::overload_cast<std::string const&>(&script::loadMetadata))
+		.def("getScriptJson", py::overload_cast<>(&script::getScriptJson));
 }

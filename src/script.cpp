@@ -1,5 +1,6 @@
 #include "Serpent.hpp"
 #include <Geode/Geode.hpp>
+#include <matjson.hpp>
 
 using namespace Serpent;
 using namespace geode::prelude;
@@ -9,6 +10,43 @@ script* script::wrapper::instance = nullptr;
 
 CREATE_WRAPPER_FOR(instance->mainClass, MenuLayer_init, bool, ARGS(self), MenuLayer* self)
 CREATE_WRAPPER_FOR(instance->mainClass, MenuLayer_onMoreGames, void, ARGS(self, p0), MenuLayer* self, cocos2d::CCObject* p0)
+
+bool script::CheckMetadata(matjson::Value json) {
+    std::vector<std::string> missingKeys;
+    if (!json.contains("developer")) {
+        missingKeys.push_back("developer");
+    } else if (!json.contains("name")) {
+        missingKeys.push_back("name");
+    } else if (!json.contains("serpent")) {
+        missingKeys.push_back("serpent");
+    }
+    if (missingKeys.empty()) {
+        return true;
+    } else {
+        for (auto& key : missingKeys) {
+            log::error("The `{}` key is missing for {}", key, name);
+        }
+        return false;
+    }
+}
+
+bool script::loadMetadata(const std::string& str) {
+    std::string err = "Json is invalid!";
+    if (auto jsonOpt = matjson::parse(str, err)) {
+        if (CheckMetadata(jsonOpt.value())) {
+            auto json = jsonOpt.value();
+            name = json["name"].as_string();
+            developer = json["developer"].as_string();
+            serpentVer = json["serpent"].as_string();
+        }
+    }
+}
+
+std::string script::getScriptJson() {
+    auto path = Mod::get()->getConfigDir() / "unzipped" / ID / "script.json";
+    auto res = geode::utils::file::readString(path);
+    return res.value();
+}
 
 void script::initAllHooks() {
     log::info("Enabling hooks for {}", ID);
