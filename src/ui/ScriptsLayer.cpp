@@ -38,16 +38,17 @@ bool ScriptsLayer::setup() {
     m_mainLayer->addChild(scriptView);
 
 
-    for (int i = 0; i < 20; i++) {
+    for (auto& script : Serpent::scripts) {
+        log::info("the {}", script->name);
         auto node = ScriptItem::create(matjson::parse(fmt::format(R"(
 {{
 	"serpent": "1.0.0",
 	"name": "{}",
-	"id": "gyatt_yellowcat98",
-	"developer": "YellowCat98"
+	"id": "{}",
+	"developer": "{}"
 }}
-)", i)), [=](CCObject* sender) {
-    scriptView->setString(fmt::format("Script number {}", i).c_str());
+)", script->name, script->id, script->developer)), [=](CCObject* sender) {
+    scriptView->setString(script->script.c_str());
 });
         scroll->m_contentLayer->addChild(node);
         

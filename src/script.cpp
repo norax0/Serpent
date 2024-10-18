@@ -11,6 +11,8 @@ script* script::wrapper::instance = nullptr;
 CREATE_WRAPPER_FOR(instance->mainClass, MenuLayer_init, bool, ARGS(self), MenuLayer* self)
 CREATE_WRAPPER_FOR(instance->mainClass, MenuLayer_onMoreGames, void, ARGS(self, p0), MenuLayer* self, cocos2d::CCObject* p0)
 
+std::vector<Serpent::visualScripts*> Serpent::scripts;
+
 bool script::CheckMetadata(matjson::Value json) {
     std::vector<std::string> missingKeys;
     if (!json.contains("developer")) {
@@ -24,7 +26,7 @@ bool script::CheckMetadata(matjson::Value json) {
         return true;
     } else {
         for (auto& key : missingKeys) {
-            log::error("The `{}` key is missing for {}", key, name);
+            log::error("The \"{}\" key is missing for {}", key, ID);
         }
         return false;
     }
@@ -32,16 +34,13 @@ bool script::CheckMetadata(matjson::Value json) {
 
 bool script::loadMetadata(const std::string& str) {
     std::string err = "Json is invalid!";
-    if (auto jsonOpt = matjson::parse(str, err)) {
-        if (CheckMetadata(jsonOpt.value())) {
-            auto json = jsonOpt.value();
-            name = json["name"].as_string();
-            developer = json["developer"].as_string();
-            serpentVer = json["serpent"].as_string();
-            return true;
-        } else {
-            return false;
-        }
+    auto json = matjson::parse(str);
+    if (CheckMetadata(json)) {
+        name = json["name"].as_string();
+        developer = json["developer"].as_string();
+        serpentVer = json["serpent"].as_string();
+        Serpent::scripts.push_back(new Serpent::visualScripts(name, developer, "very test ong!", ID));
+        return true;
     } else {
         return false;
     }

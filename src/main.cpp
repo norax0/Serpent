@@ -34,7 +34,6 @@ void unzipAndExecute(std::filesystem::path scripts) {
 				if (ok) {
 					log::info("Unzipped {}!", script.path().filename().stem());
 					log::info("Now Executing {}...", script.path().filename().stem());
-					log::info("{}", geode::utils::file::readString(scriptDir / std::filesystem::path(script.path().filename().stem().string() + ".py")).value());
 					try {
 						py::exec(py::str(geode::utils::file::readString(scriptDir / std::filesystem::path(script.path().filename().stem().string() + ".py")).value()));
 					} catch (py::error_already_set& e) {

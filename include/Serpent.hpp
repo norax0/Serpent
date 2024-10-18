@@ -65,6 +65,17 @@ namespace Serpent {
 		};
 	}
 
+	// reserved for showing the scripts in ScriptsLayer
+	struct visualScripts {
+		std::string name;
+		std::string developer;
+		std::string script;
+		std::string id;
+		visualScripts(std::string n, std::string d, std::string s, std::string i) : name(n), developer(d), script(s), id(i) {}
+
+	};
+	extern std::vector<visualScripts*> scripts;
+
 	class script {
 	private:
 		struct wrapper {
@@ -85,7 +96,11 @@ namespace Serpent {
 		pybind11::object mainClass;
 		script(const std::string& scriptID, pybind11::object obj) : ID(scriptID), mainClass(obj) {
 			wrapper::setParent(this);
-			loadMetadata(getScriptJson());
+			if (loadMetadata(getScriptJson())) {
+				geode::log::info("Loaded metadata for script {}!", ID);
+			} else {
+				geode::log::error("Failed to load metadata for script {}.", ID);
+			}
 		}
 		void initAllHooks();
 		void info(const std::string& str) {
