@@ -33,13 +33,11 @@ bool script::CheckMetadata(matjson::Value json) {
 }
 
 bool script::loadMetadata(const std::string& str) {
-    std::string err = "Json is invalid!";
     auto json = matjson::parse(str);
     if (CheckMetadata(json)) {
         name = json["name"].as_string();
         developer = json["developer"].as_string();
         serpentVer = json["serpent"].as_string();
-        Serpent::scripts.push_back(new Serpent::visualScripts(name, developer, "very test ong!", ID));
         return true;
     } else {
         return false;

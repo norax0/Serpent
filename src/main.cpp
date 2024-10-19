@@ -33,6 +33,12 @@ void unzipAndExecute(std::filesystem::path scripts) {
 				auto ok = zip->extractAllTo(scriptDir);
 				if (ok) {
 					log::info("Unzipped {}!", script.path().filename().stem());
+
+					log::info("Now setting up Visual scripts (so you can view them in the script view)");
+					auto scriptjson = matjson::parse(geode::utils::file::readString(scriptDir / "script.json").value());
+					auto scriptString = geode::utils::file::readString(scriptDir / std::filesystem::path(script.path().filename().stem().string() + ".py")).value();
+					Serpent::scripts.push_back(new Serpent::visualScripts(scriptjson["name"].as_string(), scriptjson["developer"].as_string(), scriptString, scriptjson["id"].as_string()));
+
 					log::info("Now Executing {}...", script.path().filename().stem());
 					try {
 						py::exec(py::str(geode::utils::file::readString(scriptDir / std::filesystem::path(script.path().filename().stem().string() + ".py")).value()));

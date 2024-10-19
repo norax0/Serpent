@@ -27,7 +27,7 @@ bool ScriptsLayer::setup() {
 
     m_mainLayer->addChild(border);
 
-    scriptView = MDTextArea::create("```print('hello world')```", {m_bgSprite->getContentWidth() - border->getContentWidth() - 20, 250});
+    scriptView = MDTextArea::create("", {m_bgSprite->getContentWidth() - border->getContentWidth() - 20, 250});
 
     scriptView->setPosition(
         {
@@ -48,7 +48,7 @@ bool ScriptsLayer::setup() {
 	"developer": "{}"
 }}
 )", script->name, script->id, script->developer)), [=](CCObject* sender) {
-    scriptView->setString(script->script.c_str());
+    scriptView->setString(fmt::format("```{}```", script->script).c_str());
 });
         scroll->m_contentLayer->addChild(node);
         
