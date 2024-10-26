@@ -1,15 +1,16 @@
-#include "ScriptItem.hpp"
+#include "Serpent.hpp"
 #include <Geode/Geode.hpp>
 
 using namespace Serpent::ui;
 using namespace geode::prelude;
 
 
-// used `ModItem` to know what im doing while coding this node
+// took a look at `ModItem`'s source to know what im doing while coding this node
+
 bool ScriptItem::init(matjson::Value json, std::function<void(CCObject*)> onButton) {
     if (!CCNode::init()) return false;
     this->setID(fmt::format("script-item/{}", json["id"].as_string()));
-    
+
 
     auto bg = CCScale9Sprite::create("GJ_square01.png");
     bg->setID("background");
@@ -17,7 +18,7 @@ bool ScriptItem::init(matjson::Value json, std::function<void(CCObject*)> onButt
     bg->ignoreAnchorPointForPosition(false);
     bg->setAnchorPoint({0.5f, 0.5f});
     bg->setScale(0.7f);
-    this->setContentSize({200, 30});
+    this->setContentSize({445, 30});
     bg->setContentSize((m_obContentSize - ccp(6, 0)) / bg->getScale());
     bg->setPosition(m_obContentSize / 2);
 
@@ -84,11 +85,12 @@ bool ScriptItem::init(matjson::Value json, std::function<void(CCObject*)> onButt
     viewMenu->setID("view-menu");
     viewMenu->setAnchorPoint({1.0f, 0.5f});
     viewMenu->setScale(0.4f);
-    auto sprite = ButtonSprite::create("View", "bigFont.fnt", "geode.loader/GE_button_05.png");
-    
+    auto sprite = ButtonSprite::create("View");
+    if (!sprite) return false;
 
-    auto viewBtn = CCMenuItemExt::createSpriteExtra(sprite, onButton);
-    viewMenu->addChild(viewBtn);
+    //auto viewBtn = CCMenuItemExt::createSpriteExtra(sprite, onButton);
+
+    //viewMenu->addChild(viewBtn);
 
     viewMenu->setLayout(
         RowLayout::create()
@@ -96,7 +98,6 @@ bool ScriptItem::init(matjson::Value json, std::function<void(CCObject*)> onButt
             ->setAxisAlignment(AxisAlignment::End)
             ->setGap(10)
     );
-    
 
     this->addChild(bg);
     this->addChild(mainContainer);

@@ -3,7 +3,6 @@
 #include <pybind11/functional.h>
 #include <Geode/Geode.hpp>
 
-
 #define CREATE_HOOK_FOR(pyclass, fn, pyfn, wrapperName, address, convention, returnName, body)                 \
 if (pybind11::hasattr(pyclass, pyfn)) {                                                                        \
 	auto func = pyclass.attr(pyfn);                                                                            \
@@ -65,16 +64,7 @@ namespace Serpent {
 		};
 	}
 
-	// reserved for showing the scripts in ScriptsLayer
-	struct visualScripts {
-		std::string name;
-		std::string developer;
-		std::string script;
-		std::string id;
-		visualScripts(std::string n, std::string d, std::string s, std::string i) : name(n), developer(d), script(s), id(i) {}
-
-	};
-	extern std::vector<visualScripts*> scripts;
+	
 
 	class script {
 	private:
@@ -119,4 +109,35 @@ namespace Serpent {
 		bool CheckMetadata(matjson::Value json);
 		std::string getScriptJson();
 	};
+
+	namespace ui {
+		class ScriptItem : public cocos2d::CCNode {
+		private:
+			cocos2d::extension::CCScale9Sprite* bg;
+			cocos2d::CCNode* title;
+			cocos2d::CCNode* mainContainer;
+			cocos2d::CCLabelBMFont* titleLabel;
+			cocos2d::CCMenu* devContainer;
+			cocos2d::CCLabelBMFont* dev;
+			cocos2d::CCMenu* viewMenu;
+			bool init(matjson::Value json, std::function<void(cocos2d::CCObject*)> onButton);
+		public:
+			static ScriptItem* create(matjson::Value, std::function<void(cocos2d::CCObject*)> onButton);
+		};
+
+		class ScriptsLayer : public geode::Popup<> {
+		public:
+			static ScriptsLayer* create();
+		private:
+			bool setup() override;
+			bool init();
+			geode::ScrollLayer* scroll;
+			geode::Border* border;
+			cocos2d::CCSize winSize;
+		};
+
+	}
+
+	extern std::vector<ui::ScriptItem*> scripts;
+	extern std::vector<matjson::Value> tempScripts;
 }

@@ -11,7 +11,8 @@ script* script::wrapper::instance = nullptr;
 CREATE_WRAPPER_FOR(instance->mainClass, MenuLayer_init, bool, ARGS(self), MenuLayer* self)
 CREATE_WRAPPER_FOR(instance->mainClass, MenuLayer_onMoreGames, void, ARGS(self, p0), MenuLayer* self, cocos2d::CCObject* p0)
 
-std::vector<Serpent::visualScripts*> Serpent::scripts;
+std::vector<ui::ScriptItem*> Serpent::scripts;
+std::vector<matjson::Value> Serpent::tempScripts;
 
 bool script::CheckMetadata(matjson::Value json) {
     std::vector<std::string> missingKeys;

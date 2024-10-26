@@ -3,9 +3,9 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/embed.h>
 #include <Geode/modify/MenuLayer.hpp>
+#include <Geode/modify/LoadingLayer.hpp>
 #include "Serpent.hpp"
-#include "ui/ScriptsLayer.hpp"
-#include "ui/ScriptItem.hpp"
+
 
 namespace py = pybind11;
 using namespace geode::prelude;
@@ -33,13 +33,11 @@ void unzipAndExecute(std::filesystem::path scripts) {
 				auto ok = zip->extractAllTo(scriptDir);
 				if (ok) {
 					log::info("Unzipped {}!", script.path().filename().stem());
-
-					log::info("Now setting up Visual scripts (so you can view them in the script view)");
 					auto scriptjson = matjson::parse(geode::utils::file::readString(scriptDir / "script.json").value());
-					auto scriptString = geode::utils::file::readString(scriptDir / std::filesystem::path(script.path().filename().stem().string() + ".py")).value();
-					Serpent::scripts.push_back(new Serpent::visualScripts(scriptjson["name"].as_string(), scriptjson["developer"].as_string(), scriptString, scriptjson["id"].as_string()));
 
-					log::info("Now Executing {}...", script.path().filename().stem());
+					Serpent::tempScripts.push_back(scriptjson);
+
+					log::info("Executing {}...", script.path().filename().stem());
 					try {
 						py::exec(py::str(geode::utils::file::readString(scriptDir / std::filesystem::path(script.path().filename().stem().string() + ".py")).value()));
 					} catch (py::error_already_set& e) {
@@ -54,7 +52,7 @@ void unzipAndExecute(std::filesystem::path scripts) {
 	}
 }
 
-$execute {
+$on_mod(Loaded) {
 	py::initialize_interpreter();
 	Serpent::initModule();
 	bindings::_geode::enums();
@@ -73,23 +71,37 @@ $execute {
 	auto scripts = Mod::get()->getConfigDir() / "scripts";
 
 	unzipAndExecute(scripts);
-/*
-	py::exec(R"(
-class testmod_yellowcat98:
-	def __init__(self):
-		self.script = script("testmod_yellowcat98", self)
-		self.script.initAllHooks()
-
-	def MenuLayer_init(self, this):
-		if not this.init(): return False
-		info("Hook!!!!!!!!!!")
-		return True
-
-if __name__ == "__main__":
-	testmod_yellowcat98()
-)");*/
-
 }
+
+class $modify(LoadingLayer) {
+struct Fields {
+	int currentScript = -1;
+};
+	void loadAssets() {
+		LoadingLayer::loadAssets();
+		m_fields->currentScript += 1;
+		int maxSize = Serpent::tempScripts.size();
+		auto label = static_cast<CCLabelBMFont*>(this->getChildByID("geode-small-label"));
+		label->setString("Serpent: Creating UI");
+		if (m_fields->currentScript < maxSize) {
+			log::info("{}", Serpent::tempScripts[m_fields->currentScript].dump());
+			// for whatever reason creating a ScriptItem using Serpent::tempScripts[m_fields->currentScript] doesnt work, epic!!
+			std::string json = fmt::format(R"(
+{{
+    "serpent": "{}",
+    "name": "{}",
+    "id": "{}",
+    "developer": "{}"
+}}
+)", Serpent::tempScripts[m_fields->currentScript]["serpent"].as_string(), Serpent::tempScripts[m_fields->currentScript]["name"].as_string(), Serpent::tempScripts[m_fields->currentScript]["id"].as_string(), Serpent::tempScripts[m_fields->currentScript]["developer"].as_string());
+			Serpent::scripts.push_back(Serpent::ui::ScriptItem::create(matjson::parse(json), [=](CCObject*) {
+				log::info("clicked!!");
+			}));
+		} else {
+			label->setString("Loading game resources");
+		}
+	}
+};
 
 class $modify(MenuLayer) {
 	bool init() {

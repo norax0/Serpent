@@ -1,11 +1,11 @@
-#include "ScriptsLayer.hpp"
-#include "ScriptItem.hpp"
+#include "Serpent.hpp"
 
 using namespace geode::prelude;
 using namespace Serpent::ui;
 
 bool ScriptsLayer::setup() {
-    scroll = ScrollLayer::create(CCSize(200, 250));
+    scroll = ScrollLayer::create(CCSize(445, 230));
+    this->setTitle("Serpent", "bigFont.fnt");
 
     scroll->setPosition(winSize / 2);
     scroll->m_contentLayer->setLayout(
@@ -16,7 +16,7 @@ bool ScriptsLayer::setup() {
             ->setGap(5.0f)
     );
 
-    border = Border::create(scroll, {100, 45, 0, 255}, {200, 250});
+    border = Border::create(scroll, {100, 45, 0, 255}, {445, 230});
 
     border->setPosition(
         {
@@ -27,31 +27,12 @@ bool ScriptsLayer::setup() {
 
     m_mainLayer->addChild(border);
 
-    scriptView = MDTextArea::create("", {m_bgSprite->getContentWidth() - border->getContentWidth() - 20, 250});
-
-    scriptView->setPosition(
-        {
-            border->getPositionX() + 325,
-            border->getPositionY() + 125
+    for (auto& node : Serpent::scripts) {
+        if (node != nullptr) {
+            scroll->m_contentLayer->addChild(node);
+        } else {
+            log::info("null node!");
         }
-    );
-    m_mainLayer->addChild(scriptView);
-
-
-    for (auto& script : Serpent::scripts) {
-        log::info("the {}", script->name);
-        auto node = ScriptItem::create(matjson::parse(fmt::format(R"(
-{{
-	"serpent": "1.0.0",
-	"name": "{}",
-	"id": "{}",
-	"developer": "{}"
-}}
-)", script->name, script->id, script->developer)), [=](CCObject* sender) {
-    scriptView->setString(fmt::format("```{}```", script->script).c_str());
-});
-        scroll->m_contentLayer->addChild(node);
-        
     }
 
     scroll->m_contentLayer->updateLayout();
@@ -62,7 +43,7 @@ bool ScriptsLayer::setup() {
 
 bool ScriptsLayer::init() {
     winSize = CCDirector::get()->getWinSize();
-    return Popup::init(winSize.width - 100, 280.0f);
+    return Popup::init(winSize.width - 100.0f, 280.0f);
 }
 
 ScriptsLayer* ScriptsLayer::create() {

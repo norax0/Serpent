@@ -209,7 +209,14 @@ void Serpent::bindings::robtop::bind() {
 		.def_static("scene", py::overload_cast<bool>(&MenuLayer::scene))
 		.def("init", py::overload_cast<>(&MenuLayer::init))
 		.def("onMoreGames", py::overload_cast<CCObject*>(&MenuLayer::onMoreGames));
-	
+
+	py::class_<LoadingLayer, CCLayer>(m, "LoadingLayer")
+		.def("getLoadingString", py::overload_cast<>(&LoadingLayer::getLoadingString))
+		.def("init", py::overload_cast<bool>(&LoadingLayer::init), py::arg("p0"))
+		.def("loadAssets", py::overload_cast<>(&LoadingLayer::loadAssets))
+		.def_static("scene", py::overload_cast<bool>(&LoadingLayer::scene), py::arg("p0"), py::return_value_policy::reference)
+		.def("updateProgress", py::overload_cast<int>(&LoadingLayer::updateProgress));
+
 	py::class_<FLAlertLayerProtocol>(m, "FLAlertLayerProtocol")
 		.def("FLAlert_Clicked", py::overload_cast<FLAlertLayer*, bool>(&FLAlertLayerProtocol::FLAlert_Clicked));
 
