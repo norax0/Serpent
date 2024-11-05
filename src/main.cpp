@@ -73,7 +73,7 @@ $on_mod(Loaded) {
 	unzipAndExecute(scripts);
 }
 
-class $modify(LoadingLayer) {
+/*class $modify(LoadingLayer) {
 struct Fields {
 	int currentScript = -1;
 };
@@ -101,7 +101,7 @@ struct Fields {
 			label->setString("Loading game resources");
 		}
 	}
-};
+};*/
 
 class $modify(MenuLayer) {
 	bool init() {

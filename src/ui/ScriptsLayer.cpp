@@ -27,12 +27,8 @@ bool ScriptsLayer::setup() {
 
     m_mainLayer->addChild(border);
 
-    for (auto& node : Serpent::scripts) {
-        if (node != nullptr) {
-            scroll->m_contentLayer->addChild(node);
-        } else {
-            log::info("null node!");
-        }
+    for (auto& script : Serpent::tempScripts) {
+        scroll->m_contentLayer->addChild(ScriptItem::create(script, [](CCObject*){}));
     }
 
     scroll->m_contentLayer->updateLayout();
