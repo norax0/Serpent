@@ -22,7 +22,7 @@ void unzipAndExecute(std::filesystem::path scripts) {
 
 	for (const auto& script : std::filesystem::directory_iterator(scripts)) {
 		if (script.is_directory()) {
-			log::info("{} is a folder. will be ignored.", script.path().filename().stem().string());
+			log::warn("{} is a folder. will be ignored.", script.path().filename().stem().string());
 			continue;
 		}
 		if (script.path().extension() == ".zip") {
@@ -37,13 +37,14 @@ void unzipAndExecute(std::filesystem::path scripts) {
 
 					Serpent::tempScripts.push_back(scriptjson);
 
-					log::info("Executing {}...", script.path().filename().stem());
-					try {
-						py::exec(py::str(geode::utils::file::readString(scriptDir / std::filesystem::path(script.path().filename().stem().string() + ".py")).value()));
-					} catch (py::error_already_set& e) {
-						log::error("{}", e.what());
+					if (Mod::get()->getSavedValue<std::string>("enabled-script") == script.path().filename().stem()) {
+						log::info("Executing {}...", script.path().filename().stem());
+						try {
+							py::exec(py::str(geode::utils::file::readString(scriptDir / std::filesystem::path(script.path().filename().stem().string() + ".py")).value()));
+						} catch (py::error_already_set& e) {
+							log::error("{}", e.what());
+						}
 					}
-					
 				}
 			}
 		} else {

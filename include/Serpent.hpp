@@ -8,11 +8,11 @@ if (pybind11::hasattr(pyclass, pyfn)) {                                         
 	auto func = pyclass.attr(pyfn);                                                                            \
 	if (pybind11::isinstance<pybind11::function>(func)) {                                                      \
 		auto returnName = Mod::get()->hook(                                                                    \
-    		reinterpret_cast<void*>(address),                                                                  \
-    	    &wrapperName,                                                                                      \
-    	    fn,                                                                                                \
-    	    tulip::hook::TulipConvention::convention                                                           \
-    	);                                                                                                     \
+			reinterpret_cast<void*>(address),                                                                  \
+			&wrapperName,                                                                                      \
+			fn,                                                                                                \
+			tulip::hook::TulipConvention::convention                                                           \
+		);                                                                                                     \
 		body                                                                                                   \
 	}                                                                                                          \
 }                                                                                                              \
@@ -63,8 +63,6 @@ namespace Serpent {
 			static void bind();
 		};
 	}
-
-	
 
 	class script {
 	private:
@@ -120,9 +118,12 @@ namespace Serpent {
 			cocos2d::CCMenu* devContainer;
 			cocos2d::CCLabelBMFont* dev;
 			cocos2d::CCMenu* viewMenu;
-			bool init(matjson::Value json, std::function<void(cocos2d::CCObject*)> onButton);
+			matjson::Value json;
+			bool init(matjson::Value theJson, std::function<void(cocos2d::CCObject*)> onButton);
+			void listener(float dt);
 		public:
 			static ScriptItem* create(matjson::Value, std::function<void(cocos2d::CCObject*)> onButton);
+			CCMenuItemToggler* viewBtn; // pretty much need to access it within ScriptsLayer!
 		};
 
 		class ScriptsLayer : public geode::Popup<> {

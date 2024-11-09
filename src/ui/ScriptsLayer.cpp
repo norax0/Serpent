@@ -28,7 +28,12 @@ bool ScriptsLayer::setup() {
     m_mainLayer->addChild(border);
 
     for (auto& script : Serpent::tempScripts) {
-        scroll->m_contentLayer->addChild(ScriptItem::create(script, [](CCObject*){}));
+        scroll->m_contentLayer->addChild(ScriptItem::create(script, [&](CCObject* sender) {
+            if (static_cast<CCMenuItemToggler*>(sender)->isToggled()) {
+                log::info("is toogggled!.");
+                Mod::get()->setSavedValue<std::string>("enabled-script", script["id"].as_string());
+            }
+        }));
     }
 
     scroll->m_contentLayer->updateLayout();
