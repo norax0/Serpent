@@ -1,91 +1,73 @@
 # Serpent
 
-- Documentation
-
 **Note that Serpent is extremely unfinished. these docs will only teach you the proper syntax for using Serpent!**
-- (prior python knowledge is recommended.)
+- prior python knowledge is recommended.
 
-# Creating a new Script
 
-- first, we create an instance of `script`, which is a class that has basic mod metadata, enabling hooks, etc.
-- It is recommended to only make a single instance of `script`.
-- each script requires a Script ID.
-- This is how you create an instance of `script`
-```python
-scriptname_author = script("scriptname_author") # It is recommended to make your ScriptID `scriptname_author`, aswell making the name of the `script` instance variable the same as your scriptID
+# Docs!
+- I am horrible at documenting, it is recommended that you know how to read terrible c++ if you want to understand how serpent works!!
+
+- Now you get to know how to make scripts with Serpent!
+- (check about.md for things both an end-user and a developer would use, like importing scripts.)
+
+# Initializing an empty script
+- In order to create an empty script, create a folder, this can be anywhere!
+- inside this folder, there'll be two files.
+- `script.json`: This is a json file which includes mod metadata, this is the required syntax for it:
+```json
+// (this is only in jsonc for explaining what each key does, note that your script.json must not have comments! (i think it should work fine though))
+{
+	"serpent": "1.0.0", // This is the version of Serpent that the script is made for.
+	"name": "Simple Script", // This is the name for the script
+	"id": "simplescript_yellowcat98", // This is the ID of the script to avoid collision between other scripts!
+	"developer": "YellowCat98" // The developer of the script!
+}
 ```
-- Now we have an instance of `script`!
+- `mod_id.py`: This is the main script! note that it is required for it to have the same name as the ID otherwise it won't execute!
 
-# Hooks
-- What is a hook?
-- When you hook a specific funcion (example: `MenuLayer::onMoreGames`), you replace the original function with another function.
+- Now that you've set up the empty script, package it into a .zip file! please keep in mind that it is required for it to have the same filename as the ID otherwise your mod's script will not execute either (i think)
 
-- here is an example, lets modify the `MenuLayer::onMoreGames` function.
+# Script syntax
+- Your script is required to have a class (in which you guessed (probably not) must have the same name as the ID!!)
+- Each class must have an instance of the built-in class `script`, which its constructor takes two arguments, which are:
+> ID: the ID of your script!
+> mainClass: your script's class.
 
+- Syntax example:
+```py
+# Serpent binds all geode and cocos functions/classes into __main__, you do not need to import any modules.
 
-```python
-# assuming we have an instance of `script` named `scriptname_author`.
+class simplescript_yellowcat98:
+    def init(self):
+        self.script = script("simplescript_yellowcat98", self)
 
-def scriptname_author_MenuLayer_onMoreGames(self, sender):
-    notification = Notification.create("HellO!")
-    notification.show()
+if __name__ == "__main__":
+    simplescript_yellowcat98() # Initailze an instance of simplescript_yellowcat98, this will be executed on startup.
 ```
-- Let's explain the code above.
+- Now we have an empty mod!
 
-- `scriptname_author_MenuLayer_onMoreGames(self, sender)`
-- Function name, in order to hook MenuLayer::onMoreGames, the name MUST BE `scriptname_author_MenuLayer_onMoreGames`, (this applies for any function)
+# Hello, World!
+- Serpent has an automatic hooking mechanism, so if you define `ClassName_FunctionName` within your mod's class, Serpent will detect this function and then hook `ClassName::FunctionName`
+- What is hooking? its basically a thing where a function gets replaced by the other without directly modifying the original.
 
-- `(self, sender)`
-- The arguments, normally, `MenuLayer::onMoreGames` requires only a single argument (which is `sender`)
-- In this case, we pass `self` as the first argument and then the arguments requires.
-- (note that `self` is the current instance of `MenuLayer`)
-- Why? this is in order to be able to interact more with `MenuLayer`
+- But first, in order to initialize hooks, your script's main class must call `script.initAllHooks` after initializing `self.script`.
 
-- Once we're done defining our hook, we have to enable it
+- All hooks must have `this` as its second argument, `this` is just the class that ClassName::FunctionName is defined in, so `this` is of type `ClassName`.
 
-```python
-scriptname_author.initAllHooks() # it is recommended to put this line at the end of your script.
-```
-`script.initAllHooks()` that just initializes all hooks for your specific script, you can call it twice (which enables the hook twice) but just please don't do it
+- Here's an example of a Hello World script!
 
-# Extending on a Function
-- Sometimes you might want to extend on a function instead of replacing it entirely, thanks to the first `self` argument, you can do that!
-
-```python
-# Assuming the script ID is testscript_yellowcat98
-
-# the `init` most times initializes the layer. in this case the main menu (MenuLayer)
-def testscript_yellowcat98_MenuLayer_init(self) -> bool:
-    info("Before original!") # This will be called before MenuLayer::init is called.
-    if not self.init(): return False # we just called original!
-    # note that you should never pass `self` as an argument1
-
-    info("After original!") # this will be called after MenuLayer::init is called (assuming the function returns true. which it most likely will)
-    return True
-```
-
-- Here's a more easy to understand example:
-
-```python
-# Assuming the script ID is testscript_yellowcat98
-
-# MenuLayer::onMoreGames hook
-def testscript_yellowcat98_MenuLayer_onMoreGames(self, sender):
-    info("before original!")
-    self.onMoreGames(sender) # we have just called the original!
-    info("after original is called!")
-```
-
-# Logging
-- While you already know the `print` function in python, in Serpent, it is recommended to NOT use `print`
-- This is because `print` sends direct calls to `stdout`, While you can use `print`, it is better to use `info`, `debug`, `warn`, or `error` depending on which context. here is an example!
-
-```python
-# Assuming the script ID is testscript_yellowcat98
-
-def testscript_yellowcat98_MenuLayer_init(self):
-    if not self.init():
-        error("`MenuLayer::init returned false!") # (this is just for demo purposes, this line of code won't be reached because GD automatically destroys the instance of `MenuLayer` IF MenuLayer::init returns false.)
-        return False
+```py
+class simplescript_yellowcat98:
+    def init(self):
+        self.script = script("simplescript_yellowcat98", self)
+        self.script.initAllHooks()
     
-    return True
+    def MenuLayer_onMoreGames(self, this, sender): # `self` is of type simplescript_yellowcat98, `this` is of type MenuLayer, `sender` is of type CCObject
+        Notification.create("Hello from my custom script!").show()
+
+if __name__ == "__main__":
+    simplescript_yellowcat98()
+```
+- This code modifies the more games button to show a notification!
+
+# And this is all it for now! there are a lot of other things, 

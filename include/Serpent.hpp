@@ -132,9 +132,11 @@ namespace Serpent {
 		private:
 			bool setup() override;
 			bool init();
+			void onAdd(CCObject* sender);
 			geode::ScrollLayer* scroll;
 			geode::Border* border;
 			cocos2d::CCSize winSize;
+			geode::EventListener<geode::Task<geode::Result<std::filesystem::path>>> m_pickListener;
 		};
 
 	}

@@ -21,26 +21,35 @@ void unzipAndExecute(std::filesystem::path scripts) {
 	auto unzipped = Mod::get()->getConfigDir() / "unzipped";
 
 	for (const auto& script : std::filesystem::directory_iterator(scripts)) {
+		auto name = script.path().filename().stem().string();
 		if (script.is_directory()) {
-			log::warn("{} is a folder. will be ignored.", script.path().filename().stem().string());
+			log::warn("{} is a folder. will be ignored.", name);
 			continue;
 		}
 		if (script.path().extension() == ".zip") {
-			auto scriptDir = unzipped / script.path().filename().stem();
-			log::info("Unzipping {}...", script.path().filename().stem());
+			auto scriptDir = unzipped / name;
+			log::info("Unzipping {}...", name);
 			auto zip = geode::utils::file::Unzip::create(script.path());
 			if (zip) {
 				auto ok = zip->extractAllTo(scriptDir);
 				if (ok) {
-					log::info("Unzipped {}!", script.path().filename().stem());
-					auto scriptjson = matjson::parse(geode::utils::file::readString(scriptDir / "script.json").value());
+					log::info("Unzipped {}!", name);
+					auto scriptString = geode::utils::file::readString(scriptDir / "script.json");
+					if (scriptString.isErr()) {
+						log::error("Failed to read script.json for {}, file may be corrupted or does not exist.", name);
+						return;
+					}
+					auto scriptjson = matjson::parse(scriptString.value());
 
 					Serpent::tempScripts.push_back(scriptjson);
 
-					if (Mod::get()->getSavedValue<std::string>("enabled-script") == script.path().filename().stem()) {
-						log::info("Executing {}...", script.path().filename().stem());
+					if (Mod::get()->getSavedValue<std::string>("enabled-script") == name) {
+						log::info("Executing {}...", name);
 						try {
-							py::exec(py::str(geode::utils::file::readString(scriptDir / std::filesystem::path(script.path().filename().stem().string() + ".py")).value()));
+							auto scriptSource = geode::utils::file::readString(scriptDir / std::filesystem::path(name + ".py"));
+							if (scriptSource.isErr()) {
+								log::error("Failed to execute {}, file may be corrupted or does not exist.", name);
+							}
 						} catch (py::error_already_set& e) {
 							log::error("{}", e.what());
 						}

@@ -30,16 +30,66 @@ bool ScriptsLayer::setup() {
     for (auto& script : Serpent::tempScripts) {
         scroll->m_contentLayer->addChild(ScriptItem::create(script, [&](CCObject* sender) {
             if (static_cast<CCMenuItemToggler*>(sender)->isToggled()) {
-                log::info("is toogggled!.");
                 Mod::get()->setSavedValue<std::string>("enabled-script", script["id"].as_string());
             }
         }));
     }
 
+    auto menu = CCMenu::create();
+
+    auto restartBtn = CCMenuItemExt::createSpriteExtraWithFrameName("GJ_updateBtn_001.png", 0.78f, [](CCObject* sender){
+        game::restart();
+    });
+    menu->addChild(restartBtn);
+    auto plusSpr = CircleButtonSprite::createWithSprite("plus_sign.png"_spr);
+    plusSpr->setScale(0.78f);
+    auto addBtn = CCMenuItemSpriteExtra::create(plusSpr, this, menu_selector(ScriptsLayer::onAdd));
+    menu->addChild(addBtn);
+
+    menu->setLayout(RowLayout::create()
+        ->setAxis(Axis::Row)
+        ->setAxisAlignment(AxisAlignment::Center)
+        ->setAutoScale(true)
+        ->setGap(5.0f)
+        ->setCrossAxisAlignment(AxisAlignment::Center)
+    );
+    menu->setPosition({-180.0f, 118.0f});
+
+    m_buttonMenu->addChild(menu);
     scroll->m_contentLayer->updateLayout();
     scroll->updateLayout();
     scroll->scrollToTop();
     return true;
+}
+
+void ScriptsLayer::onAdd(CCObject* sender) {
+    // https://github.com/ShineUA/Geometrize2GD/blob/main/src/layers/ImportPopup.cpp
+    file::FilePickOptions::Filter filter = {};
+    file::FilePickOptions options = {
+        std::nullopt,
+        {filter}
+    };
+
+    m_pickListener.bind([this](Task<Result<std::filesystem::path>>::Event* event) {
+        if (event->isCancelled()) {
+            Notification::create("Failed to open file, task cancelled.", NotificationIcon::Error)->show();
+            return;
+        }
+
+        if (auto result = event->getValue()) {
+            if (result->isErr()) {
+                Notification::create(fmt::format("Error opening file: {}", result->err()), NotificationIcon::Error)->show();
+                return;
+            }
+            auto path = result->unwrap();
+            if (path.extension() != ".zip") {
+                Notification::create("Must have a .zip extension.", NotificationIcon::Error)->show();
+                return;
+            }
+            log::info("{}", path);
+        }
+    });
+    m_pickListener.setFilter(file::pick(file::PickMode::OpenFile, options));
 }
 
 bool ScriptsLayer::init() {
