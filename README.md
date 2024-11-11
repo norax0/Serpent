@@ -70,4 +70,4 @@ if __name__ == "__main__":
 ```
 - This code modifies the more games button to show a notification!
 
-# And this is all it for now! there are a lot of other things, 
+# And this is all it for now! there are a lot of other things, it'd be hard to document them all,
