@@ -86,7 +86,20 @@ void ScriptsLayer::onAdd(CCObject* sender) {
                 Notification::create("Must have a .zip extension.", NotificationIcon::Error)->show();
                 return;
             }
-            log::info("{}", path);
+            if (std::filesystem::exists(Mod::get()->getConfigDir() / "scripts" / path.filename().stem())) {
+                geode::createQuickPopup(
+                    "File already exists.",
+                    fmt::format("File {} already exists at {}, overwrite?", path.filename(), path),
+                    "Yes", "No",
+                    [=](auto, bool btn2) {
+                        if (!btn2) {
+                            std::filesystem::copy(path, Mod::get()->getConfigDir() / "scripts", std::filesystem::copy_options::overwrite_existing);
+                        }
+                    }
+                );
+            } else {
+                std::filesystem::copy(path, Mod::get()->getConfigDir() / "scripts", std::filesystem::copy_options::overwrite_existing); // we made sure it doesnt exist yet, the last argument is useless
+            }
         }
     });
     m_pickListener.setFilter(file::pick(file::PickMode::OpenFile, options));
