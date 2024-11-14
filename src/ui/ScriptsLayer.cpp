@@ -105,14 +105,14 @@ void ScriptsLayer::onAdd(CCObject* sender) {
     m_pickListener.setFilter(file::pick(file::PickMode::OpenFile, options));
 }
 
-bool ScriptsLayer::init() {
+bool ScriptsLayer::initAnchored() {
     winSize = CCDirector::get()->getWinSize();
-    return Popup::init(winSize.width - 100.0f, 280.0f);
+    return Popup::initAnchored(winSize.width - 100.0f, 280.0f);
 }
 
 ScriptsLayer* ScriptsLayer::create() {
     auto ret = new ScriptsLayer();
-    if (ret->init()) {
+    if (ret->initAnchored()) {
         ret->autorelease();
         return ret;
     }

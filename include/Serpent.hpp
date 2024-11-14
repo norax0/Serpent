@@ -131,7 +131,7 @@ namespace Serpent {
 			static ScriptsLayer* create();
 		private:
 			bool setup() override;
-			bool init();
+			bool initAnchored();
 			void onAdd(CCObject* sender);
 			geode::ScrollLayer* scroll;
 			geode::Border* border;
