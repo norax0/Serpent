@@ -48,7 +48,7 @@ bool script::loadMetadata(const std::string& str) {
 std::string script::getScriptJson() {
     auto path = Mod::get()->getConfigDir() / "unzipped" / ID / "script.json";
     auto res = geode::utils::file::readString(path);
-    return res.value();
+    return res.unwrap();
 }
 
 void script::initAllHooks() {
