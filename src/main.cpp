@@ -41,7 +41,7 @@ void unzipAndExecute(std::filesystem::path scripts) {
 					}
 					auto scriptjson = matjson::parse(scriptString.unwrap());
 
-					Serpent::tempScripts.push(scriptjson);
+					Serpent::tempScripts.push_back(scriptjson.unwrap());
 
 					if (Mod::get()->getSavedValue<std::string>("enabled-script") == name) {
 						log::info("Executing {}...", name);
