@@ -10,7 +10,7 @@ using namespace geode::prelude;
 bool ScriptItem::init(matjson::Value theJson, std::function<void(CCObject*)> onButton) {
 	if (!CCNode::init()) return false;
 	json = theJson;
-	this->setID(fmt::format("script-item/{}", json["id"].as_string()));
+	this->setID(fmt::format("script-item/{}", json["id"].asString()));
 	
 
 
@@ -52,7 +52,7 @@ bool ScriptItem::init(matjson::Value theJson, std::function<void(CCObject*)> onB
 	devContainer->ignoreAnchorPointForPosition(false);
 	devContainer->setAnchorPoint({0.0f, 0.0f});
 
-	dev = CCLabelBMFont::create(json["developer"].as_string().c_str(), "goldFont.fnt");
+	dev = CCLabelBMFont::create(json["developer"].asString().c_str(), "goldFont.fnt");
 
 	devContainer->addChild(dev);
 
@@ -70,7 +70,7 @@ bool ScriptItem::init(matjson::Value theJson, std::function<void(CCObject*)> onB
 
 	mainContainer->addChild(title);
 
-	titleLabel = CCLabelBMFont::create(json["name"].as_string().c_str(), "bigFont.fnt");
+	titleLabel = CCLabelBMFont::create(json["name"].asString().c_str(), "bigFont.fnt");
 	titleLabel->setID("title-label");
 	titleLabel->setLayoutOptions(AxisLayoutOptions::create()->setScalePriority(1));
 	title->addChild(titleLabel);
@@ -113,7 +113,7 @@ bool ScriptItem::init(matjson::Value theJson, std::function<void(CCObject*)> onB
 }
 
 void ScriptItem::listener(float dt) {
-	if (Mod::get()->getSavedValue<std::string>("enabled-script") != json["id"].as_string()) {
+	if (Mod::get()->getSavedValue<std::string>("enabled-script") != json["id"].asString()) {
 		viewBtn->toggle(true);
 	} else {
 		viewBtn->toggle(false);

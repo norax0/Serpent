@@ -41,7 +41,7 @@ void unzipAndExecute(std::filesystem::path scripts) {
 					}
 					auto scriptjson = matjson::parse(scriptString.unwrap());
 
-					Serpent::tempScripts.push_back(scriptjson);
+					Serpent::tempScripts.push(scriptjson);
 
 					if (Mod::get()->getSavedValue<std::string>("enabled-script") == name) {
 						log::info("Executing {}...", name);
@@ -84,36 +84,6 @@ $on_mod(Loaded) {
 
 	unzipAndExecute(scripts);
 }
-
-/*class $modify(LoadingLayer) {
-struct Fields {
-	int currentScript = -1;
-};
-	void loadAssets() {
-		LoadingLayer::loadAssets();
-		m_fields->currentScript += 1;
-		int maxSize = Serpent::tempScripts.size();
-		auto label = static_cast<CCLabelBMFont*>(this->getChildByID("geode-small-label"));
-		label->setString("Serpent: Creating UI");
-		if (m_fields->currentScript < maxSize) {
-			log::info("{}", Serpent::tempScripts[m_fields->currentScript].dump());
-			// for whatever reason creating a ScriptItem using Serpent::tempScripts[m_fields->currentScript] doesnt work, epic!!
-			std::string json = fmt::format(R"(
-{{
-    "serpent": "{}",
-    "name": "{}",
-    "id": "{}",
-    "developer": "{}"
-}}
-)", Serpent::tempScripts[m_fields->currentScript]["serpent"].as_string(), Serpent::tempScripts[m_fields->currentScript]["name"].as_string(), Serpent::tempScripts[m_fields->currentScript]["id"].as_string(), Serpent::tempScripts[m_fields->currentScript]["developer"].as_string());
-			Serpent::scripts.push_back(Serpent::ui::ScriptItem::create(matjson::parse(json), [=](CCObject*) {
-				log::info("clicked!!");
-			}));
-		} else {
-			label->setString("Loading game resources");
-		}
-	}
-};*/
 
 class $modify(MenuLayer) {
 	bool init() {
