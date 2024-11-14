@@ -122,9 +122,9 @@ void Serpent::bindings::cocos::bind() {
 		.def("removeAllChildrenAndCleanup", py::overload_cast<bool>(&CCNode::removeAllChildrenWithCleanup), py::arg("cleanup")) // binded as 2 separate functions (wanted to bind removeAllChildrenWithCleanup only, but didnt want to cause confusion)
 		.def("getID", py::overload_cast<>(&CCNode::getID))
 		.def("setID", py::overload_cast<std::string const&>(&CCNode::setID), py::arg("id"))
-		.def("getChildByID", py::overload_cast<std::string const&>(&CCNode::getChildByID), py::arg("id"), py::return_value_policy::reference)
-		.def("getChildByIDRecursive", py::overload_cast<std::string const&>(&CCNode::getChildByIDRecursive), py::arg("id"), py::return_value_policy::reference)
-		.def("removeChildByID", py::overload_cast<std::string const&>(&CCNode::removeChildByID), py::arg("id"));
+		.def("getChildByID", py::overload_cast<std::string_view>(&CCNode::getChildByID), py::arg("id"), py::return_value_policy::reference)
+		.def("getChildByIDRecursive", py::overload_cast<std::string_view>(&CCNode::getChildByIDRecursive), py::arg("id"), py::return_value_policy::reference)
+		.def("removeChildByID", py::overload_cast<std::string_view>(&CCNode::removeChildByID), py::arg("id"));
 	
 	py::class_<CCRGBAProtocol>(m, "CCRGBAProtocol")
 		.def("setColor", py::overload_cast<ccColor3B const&>(&CCRGBAProtocol::setColor), py::arg("color"))
