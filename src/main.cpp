@@ -39,7 +39,7 @@ void unzipAndExecute(std::filesystem::path scripts) {
 						log::error("Failed to read script.json for {}, file may be corrupted or does not exist.", name);
 						return;
 					}
-					auto scriptjson = matjson::parse(scriptString.value());
+					auto scriptjson = matjson::parse(scriptString.unwrap());
 
 					Serpent::tempScripts.push_back(scriptjson);
 
