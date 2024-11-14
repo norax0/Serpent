@@ -35,10 +35,10 @@ bool script::CheckMetadata(matjson::Value json) {
 
 bool script::loadMetadata(const std::string& str) {
     auto json = matjson::parse(str);
-    if (CheckMetadata(json)) {
-        name = json["name"].asString();
-        developer = json["developer"].asString();
-        serpentVer = json["serpent"].asString();
+    if (CheckMetadata(json.unwrap())) {
+        name = json["name"].asString().unwrap();
+        developer = json["developer"].asString().unwrap();
+        serpentVer = json["serpent"].asString().unwrap();
         return true;
     } else {
         return false;
