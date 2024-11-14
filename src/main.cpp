@@ -32,7 +32,7 @@ void unzipAndExecute(std::filesystem::path scripts) {
 			auto zip = geode::utils::file::Unzip::create(script.path());
 			if (zip) {
 				if (!zip.isErr()) {
-					zip.value().extractAllTo(scriptDir);
+					zip.unwrap().extractAllTo(scriptDir);
 					log::info("Unzipped {}!", name);
 					auto scriptString = geode::utils::file::readString(scriptDir / "script.json");
 					if (scriptString.isErr()) {
