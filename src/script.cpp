@@ -57,9 +57,3 @@ std::string script::getScriptJson() {
     auto res = geode::utils::file::readString(path);
     return res.unwrap();
 }
-
-void script::initAllHooks() {
-    log::info("Enabling hooks for {}", ID);
-    CREATE_HOOK_WITH_CHECK_FOR(this->mainClass, "MenuLayer::init", "MenuLayer_init", wrapper::MenuLayer_init, geode::base::get() + 0x31ebd0, Default, MenuLayer_initHook)
-    CREATE_HOOK_WITH_CHECK_FOR(this->mainClass, "MenuLayer::onMoreGames", "MenuLayer_onMoreGames", wrapper::MenuLayer_onMoreGames, geode::base::get() + 0x320880, Default, MenuLayer_onMoreGamesHook)
-}
