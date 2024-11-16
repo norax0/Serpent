@@ -10,3 +10,4 @@
 
 **Note!**
 - In order to keep this mod's size manageable, Serpent uses `pybind11` which requires python to be installed, you can install python at https://python.org.
+- Serpent is in beta! please report any issues you encounter in the [Discord server](https://discord.gg/qnPgmUVZsV)
