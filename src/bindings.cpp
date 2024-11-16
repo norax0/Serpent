@@ -9,8 +9,6 @@ void Serpent::initModule() {
 	Serpent::m = py::module::import("__main__");
 }
 
-// geode
-
 void Serpent::bindings::_geode::bind() {
 	py::class_<Notification>(m, "Notification")
 		.def_static("create", static_cast<Notification* (*)(const std::string&, NotificationIcon, float)>(&Notification::create), py::arg("text"), py::arg("icon") = NotificationIcon::None, py::arg("time") = geode::NOTIFICATION_DEFAULT_TIME, py::return_value_policy::reference)

@@ -48,7 +48,9 @@ void unzipAndExecute(std::filesystem::path scripts) {
 							auto scriptSource = geode::utils::file::readString(scriptDir / std::filesystem::path(name + ".py"));
 							if (scriptSource.isErr()) {
 								log::error("Failed to execute {}, file may be corrupted or does not exist.", name);
+								return;
 							}
+							py::exec(scriptSource.unwrap());
 						} catch (py::error_already_set& e) {
 							log::error("{}", e.what());
 						}

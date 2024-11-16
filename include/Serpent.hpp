@@ -35,7 +35,6 @@ type wrapper::fn(__VA_ARGS__) { \
 #define ARGS(...) __VA_ARGS__
 
 namespace Serpent {
-
 	extern pybind11::module m;
 	extern std::unordered_map<std::string, intptr_t> methods;
 
@@ -64,7 +63,7 @@ namespace Serpent {
 		};
 	}
 
-	class script; // gently tell the compiler to shut the fuck up
+	class script;
 
 	struct wrapper {
 		static script* instance;
