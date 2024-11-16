@@ -70,8 +70,13 @@ void Serpent::bindings::cocos::bind() {
 
 	py::class_<CCDirector>(m, "CCDirector")
 		.def_static("get", py::overload_cast<>(&CCDirector::get), py::return_value_policy::reference)
-		.def("getWinSize", py::overload_cast<>(&CCDirector::getWinSize));
+		.def("getWinSize", py::overload_cast<>(&CCDirector::getWinSize))
+		.def("replaceScene", py::overload_cast<CCScene*>(&CCDirector::replaceScene), py::arg("pScene"))
+		.def("pushScene", py::overload_cast<CCScene*>(&CCDirector::pushScene), py::arg("pScene"))
+		.def("popScene", py::overload_cast<>(&CCDirector::popScene));
 	
+	
+
 	py::class_<CCNode, CCObject>(m, "CCNode")
 		.def_static("create", &CCNode::create, py::return_value_policy::reference)
 		.def("init", &CCNode::init)
@@ -124,6 +129,10 @@ void Serpent::bindings::cocos::bind() {
 		.def("getChildByIDRecursive", py::overload_cast<std::string_view>(&CCNode::getChildByIDRecursive), py::arg("id"), py::return_value_policy::reference)
 		.def("removeChildByID", py::overload_cast<std::string_view>(&CCNode::removeChildByID), py::arg("id"));
 	
+
+	py::class_<CCScene, CCNode>(m, "CCScene")
+		.def_static("create", py::overload_cast<>(&CCScene::create), py::return_value_policy::reference);
+
 	py::class_<CCRGBAProtocol>(m, "CCRGBAProtocol")
 		.def("setColor", py::overload_cast<ccColor3B const&>(&CCRGBAProtocol::setColor), py::arg("color"))
 		.def("getColor", py::overload_cast<>(&CCRGBAProtocol::getColor))
@@ -132,6 +141,7 @@ void Serpent::bindings::cocos::bind() {
 		.def("getOpacity", py::overload_cast<>(&CCRGBAProtocol::getOpacity));
 	
 	py::class_<CCLayer, CCNode>(m, "CCLayer")
+		.def(py::init<>())
 		.def_static("create", py::overload_cast<>(&CCLayer::create), py::return_value_policy::reference);
 	
 	py::class_<CCLayerRGBA, CCLayer, CCRGBAProtocol>(m, "CCLayerRGBA")

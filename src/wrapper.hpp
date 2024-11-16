@@ -15,7 +15,6 @@ namespace Serpent {
         static void MenuLayer_onCreator(MenuLayer* self, cocos2d::CCObject* sender);
         static void MenuLayer_onDaily(MenuLayer* self, cocos2d::CCObject* sender);
         static void MenuLayer_onGarage(MenuLayer* self, cocos2d::CCObject* sender);
-
         static void MenuLayer_onMyProfile(MenuLayer* self, cocos2d::CCObject* sender);
         static void MenuLayer_onOptions(MenuLayer* self, cocos2d::CCObject* sender);
         static void MenuLayer_onOptionsInstant(MenuLayer* self);
