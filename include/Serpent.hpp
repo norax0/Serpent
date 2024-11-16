@@ -65,15 +65,6 @@ namespace Serpent {
 
 	class script;
 
-	struct wrapper {
-		static script* instance;
-		static void setParent(script* parent) {
-			instance = parent;
-		}
-		static bool MenuLayer_init(MenuLayer* self);
-		static void MenuLayer_onMoreGames(MenuLayer* self, cocos2d::CCObject* p0);
-	};
-
 	class script {
 	public:
 		std::string ID;
@@ -82,14 +73,7 @@ namespace Serpent {
 		std::string scriptjson;
 		std::string serpentVer;
 		pybind11::object mainClass;
-		script(const std::string& scriptID, pybind11::object obj) : ID(scriptID), mainClass(obj) {
-			wrapper::setParent(this);
-			if (loadMetadata(getScriptJson())) {
-				geode::log::info("Loaded metadata for script {}!", ID);
-			} else {
-				geode::log::error("Failed to load metadata for script {}.", ID);
-			}
-		}
+		script(const std::string& scriptID, pybind11::object obj);
 		void initAllHooks();
 		void info(const std::string& str) {
 			geode::log::info("[{}]: {}", name, str);

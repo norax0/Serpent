@@ -1,6 +1,7 @@
 #include "Serpent.hpp"
 #include <Geode/Geode.hpp>
 #include <matjson.hpp>
+#include "wrapper.hpp"
 
 using namespace Serpent;
 using namespace geode::prelude;
@@ -8,11 +9,17 @@ namespace py = pybind11;
 
 script* wrapper::instance = nullptr;
 
-CREATE_WRAPPER_FOR(instance->mainClass, MenuLayer_init, bool, ARGS(self), MenuLayer* self)
-CREATE_WRAPPER_FOR(instance->mainClass, MenuLayer_onMoreGames, void, ARGS(self, p0), MenuLayer* self, cocos2d::CCObject* p0)
-
 std::vector<ui::ScriptItem*> Serpent::scripts;
 std::vector<matjson::Value> Serpent::tempScripts;
+
+script::script(const std::string& scriptID, pybind11::object obj) : ID(scriptID), mainClass(obj) {
+	wrapper::setParent(this);
+	if (loadMetadata(getScriptJson())) {
+		log::info("Loaded metadata for script {}!", ID);
+	} else {
+		log::error("Failed to load metadata for script {}.", ID);
+	}
+}
 
 bool script::CheckMetadata(matjson::Value json) {
     std::vector<std::string> missingKeys;
