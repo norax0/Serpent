@@ -222,7 +222,8 @@ void Serpent::bindings::robtop::bind() {
 		.def_static("create", py::overload_cast<FLAlertLayerProtocol*, char const*, std::string, char const*, char const*, float, bool, float, float>(&FLAlertLayer::create), py::arg("delegate"), py::arg("title"), py::arg("desc"), py::arg("btn1"), py::arg("btn2"), py::arg("width"), py::arg("scroll"), py::arg("height"), py::arg("textScale"), py::return_value_policy::reference) // why.
 		.def_static("create", py::overload_cast<FLAlertLayerProtocol*, char const*, std::string, char const*, char const*, float>(&FLAlertLayer::create), py::arg("delegate"), py::arg("title"), py::arg("desc"), py::arg("btn1"), py::arg("btn2"), py::arg("width"), py::return_value_policy::reference)
 		.def_static("create", py::overload_cast<FLAlertLayerProtocol*, char const*, std::string, char const*, char const*>(&FLAlertLayer::create), py::arg("delegate"), py::arg("title"), py::arg("desc"), py::arg("btn1"), py::arg("btn2"), py::return_value_policy::reference)
-		.def_static("create", py::overload_cast<char const*, std::string const&, char const*>(&FLAlertLayer::create), py::arg("title"), py::arg("desc"), py::arg("btn"), py::return_value_policy::reference);
+		.def_static("create", py::overload_cast<char const*, std::string const&, char const*>(&FLAlertLayer::create), py::arg("title"), py::arg("desc"), py::arg("btn"), py::return_value_policy::reference)
+		.def("show", py::overload_cast<>(&FLAlertLayer::show));
 }
 
 void Serpent::bindings::serpent::bind() {
