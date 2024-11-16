@@ -28,7 +28,7 @@ CREATE_HOOK_FOR(pyclass, function, pyfn, wrapperName, address, convention, retur
 #define GET_PY_FN(pyclass, fn, type, ...) pyclass.attr(fn)(__VA_ARGS__).cast<type>()
 
 #define CREATE_WRAPPER_FOR(pyclass, fn, type, args, ...) \
-type script::wrapper::fn(__VA_ARGS__) { \
+type wrapper::fn(__VA_ARGS__) { \
 	return GET_PY_FN(pyclass, #fn, type, args); \
 } \
 
@@ -64,17 +64,18 @@ namespace Serpent {
 		};
 	}
 
+	class script; // gently tell the compiler to shut the fuck up
+
+	struct wrapper {
+		static script* instance;
+		static void setParent(script* parent) {
+			instance = parent;
+		}
+		static bool MenuLayer_init(MenuLayer* self);
+		static void MenuLayer_onMoreGames(MenuLayer* self, cocos2d::CCObject* p0);
+	};
+
 	class script {
-	private:
-		struct wrapper {
-			static script* instance;
-			static void setParent(script* parent) {
-				instance = parent;
-			}
-			static bool MenuLayer_init(MenuLayer* self);
-			static void MenuLayer_onMoreGames(MenuLayer* self, cocos2d::CCObject* p0);
-		};
-	
 	public:
 		std::string ID;
 		std::string name;
@@ -108,6 +109,8 @@ namespace Serpent {
 		std::string getScriptJson();
 	};
 
+	
+
 	namespace ui {
 		class ScriptItem : public cocos2d::CCNode {
 		private:
@@ -138,7 +141,6 @@ namespace Serpent {
 			cocos2d::CCSize winSize;
 			geode::EventListener<geode::Task<geode::Result<std::filesystem::path>>> m_pickListener;
 		};
-
 	}
 
 	extern std::vector<ui::ScriptItem*> scripts;
