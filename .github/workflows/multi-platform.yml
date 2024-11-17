@@ -58,6 +58,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.build.outputs.build-output }}
+          asset_path: ${{ steps.build.outputs.build-output }}/yellowcat98.serpent.geode
           asset_name: yellowcat98.serpent.geode
           asset_content_type: application/octet-stream
