@@ -3,19 +3,22 @@
 #include <pybind11/functional.h>
 #include <Geode/Geode.hpp>
 
-#define CREATE_HOOK_FOR(pyclass, fn, pyfn, wrapperName, address, convention, returnName, body)                 \
-if (pybind11::hasattr(pyclass, pyfn)) {                                                                        \
-	auto func = pyclass.attr(pyfn);                                                                            \
-	if (pybind11::isinstance<pybind11::function>(func)) {                                                      \
-		auto returnName = Mod::get()->hook(                                                                    \
-			reinterpret_cast<void*>(address),                                                                  \
-			&wrapperName,                                                                                      \
-			fn,                                                                                                \
-			tulip::hook::TulipConvention::convention                                                           \
-		);                                                                                                     \
-		body                                                                                                   \
-	}                                                                                                          \
-}                                                                                                              \
+#define CREATE_HOOK_FOR(pyclass, fn, pyfn, wrapperName, address, convention, returnName, body) \
+if (std::find(wrapper::enabledHooks.begin(), wrapper::enabledHooks.end(), pyfn) == wrapper::enabledHooks.end()) { \
+	if (pybind11::hasattr(pyclass, pyfn)) { \
+		auto func = pyclass.attr(pyfn); \
+		if (pybind11::isinstance<pybind11::function>(func)) { \
+			auto returnName = Mod::get()->hook( \
+				reinterpret_cast<void*>(address), \
+				&wrapperName, \
+				fmt::format("{} for {}", fn, std::string(pybind11::str(pyclass.attr("__class__").attr("__name__")))), \
+				tulip::hook::TulipConvention::convention \
+			); \
+			body \
+		} \
+	} \
+	wrapper::enabledHooks.push_back(pyfn); \
+} \
 
 
 #define CREATE_HOOK_WITH_CHECK_FOR(pyclass, function, pyfn, wrapperName, address, convention, returnName)  \

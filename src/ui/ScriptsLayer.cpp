@@ -53,7 +53,7 @@ bool ScriptsLayer::setup() {
         ->setGap(5.0f)
         ->setCrossAxisAlignment(AxisAlignment::Center)
     );
-    menu->setPosition({-180.0f, 118.0f});
+    menu->setPosition({70.0f, 258.0f});
 
     m_buttonMenu->addChild(menu);
     scroll->m_contentLayer->updateLayout();

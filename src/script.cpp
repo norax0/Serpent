@@ -8,6 +8,7 @@ using namespace geode::prelude;
 namespace py = pybind11;
 
 script* wrapper::instance = nullptr;
+std::vector<std::string> wrapper::enabledHooks = {};
 
 std::vector<ui::ScriptItem*> Serpent::scripts;
 std::vector<matjson::Value> Serpent::tempScripts;

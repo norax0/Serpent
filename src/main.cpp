@@ -18,6 +18,8 @@ void unzipAndExecute(std::filesystem::path scripts) {
 		return;
 	}
 
+	static bool shouldExec = true;
+
 	auto unzipped = Mod::get()->getConfigDir() / "unzipped";
 
 	for (const auto& script : std::filesystem::directory_iterator(scripts)) {
@@ -42,7 +44,7 @@ void unzipAndExecute(std::filesystem::path scripts) {
 
 					Serpent::tempScripts.push_back(scriptjson.unwrap());
 
-					if (Mod::get()->getSavedValue<std::string>("enabled-script") == name) {
+					if (Mod::get()->getSavedValue<std::string>("enabled-script") == name && shouldExec) {
 						log::info("Executing {}...", name);
 						try {
 							auto scriptSource = geode::utils::file::readString(scriptDir / std::filesystem::path(name + ".py"));
@@ -50,6 +52,7 @@ void unzipAndExecute(std::filesystem::path scripts) {
 								log::error("Failed to execute {}, file may be corrupted or does not exist.", name);
 								return;
 							}
+							shouldExec = false;
 							py::exec(scriptSource.unwrap());
 						} catch (py::error_already_set& e) {
 							log::error("{}", e.what());
