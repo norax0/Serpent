@@ -1,4 +1,6 @@
 #pragma once
+#include <Python.h>
+#include <frameobject.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <Geode/Geode.hpp>
@@ -38,31 +40,25 @@ type wrapper::fn(__VA_ARGS__) { \
 #define ARGS(...) __VA_ARGS__
 
 namespace Serpent {
-	extern pybind11::module m;
-	extern std::unordered_map<std::string, intptr_t> methods;
-
-
-	void initModule();
-
 	namespace bindings {
 		struct _geode { // prefixed with _ so compiler/YOU doesnt/dont get confused between Serpent::geode and geode ns
-			static void bind();
-			static void enums();
+			static void bind(const pybind11::module& m);
+			static void enums(const pybind11::module& m);
 		};
 
 		struct cocos {
-			static void bind();
-			static void enums();
+			static void bind(const pybind11::module& m);
+			static void enums(const pybind11::module& m);
 		};
 
 		struct robtop {
-			static void bind();
-			static void enums();
+			static void bind(const pybind11::module& m);
+			static void enums(const pybind11::module& m);
 		};
 
 		// mod-specific bindings
 		struct serpent {
-			static void bind();
+			static void bind(const pybind11::module& m);
 		};
 	}
 

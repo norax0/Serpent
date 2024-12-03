@@ -3,21 +3,17 @@
 namespace py = pybind11;
 using namespace geode::prelude;
 
-py::module Serpent::m;
-
-void Serpent::initModule() {
-	Serpent::m = py::module::import("__main__");
-}
-
-void Serpent::bindings::_geode::bind() {
+void Serpent::bindings::_geode::bind(const pybind11::module& m) {
 	py::class_<Notification>(m, "Notification")
-		.def_static("create", static_cast<Notification* (*)(const std::string&, NotificationIcon, float)>(&Notification::create), py::arg("text"), py::arg("icon") = NotificationIcon::None, py::arg("time") = geode::NOTIFICATION_DEFAULT_TIME, py::return_value_policy::reference)
+		.def_static("create", py::overload_cast<std::string const&, NotificationIcon, float>(&Notification::create), py::arg("text"), py::arg("icon") = NotificationIcon::None, py::arg("time") = geode::NOTIFICATION_DEFAULT_TIME, py::return_value_policy::reference)
 		.def("show", &Notification::show)
 		.def("cancel", &Notification::cancel)
 		.def("hide", &Notification::hide);
 }
 
-void Serpent::bindings::_geode::enums() {
+void Serpent::bindings::_geode::enums(const pybind11::module& m) {
+	log::debug("Binding geode enums...");
+	
 	py::enum_<NotificationIcon>(m, "NotificationIcon")
 		.value("None", NotificationIcon::None)
 		.value("Loading", NotificationIcon::Loading)
@@ -25,11 +21,13 @@ void Serpent::bindings::_geode::enums() {
 		.value("Warning", NotificationIcon::Warning)
 		.value("Error", NotificationIcon::Error)
 		.value("Info", NotificationIcon::Info);
+	
+	log::debug("Finished binding geode enums!");
 }
 
 // cocos
 
-void Serpent::bindings::cocos::bind() {
+void Serpent::bindings::cocos::bind(const pybind11::module& m) {
 	py::class_<CCObject>(m, "CCObject")
 		.def("release", &CCObject::release)
 		.def("retain", &CCObject::retain)
@@ -201,7 +199,7 @@ void Serpent::bindings::cocos::bind() {
 }
 
 
-void Serpent::bindings::cocos::enums() {
+void Serpent::bindings::cocos::enums(const pybind11::module& m) {
 	py::enum_<CCObjectType>(m, "CCObjectType") // i actualy dont know why this exists but ill just bind it for the 2 people that want it!
 		.value("PlayLayer", CCObjectType::PlayLayer)
 		.value("LevelEditorLayer", CCObjectType::LevelEditorLayer)
@@ -209,7 +207,7 @@ void Serpent::bindings::cocos::enums() {
 		.value("MenuLayer", CCObjectType::MenuLayer);
 }
 
-void Serpent::bindings::robtop::bind() {
+void Serpent::bindings::robtop::bind(const pybind11::module& m) {
 	py::class_<GooglePlayDelegate>(m, "GooglePlayDelegate")	
 		.def("googlePlaySignedIn", py::overload_cast<>(&GooglePlayDelegate::googlePlaySignedIn));
 
@@ -253,7 +251,7 @@ void Serpent::bindings::robtop::bind() {
 		.def("show", py::overload_cast<>(&FLAlertLayer::show));
 }
 
-void Serpent::bindings::serpent::bind() {
+void Serpent::bindings::serpent::bind(const pybind11::module& m) {
 	py::class_<script>(m, "script")
 		.def(py::init<const std::string&, py::object>(), py::return_value_policy::reference)
 		.def_readwrite("ID", &script::ID)

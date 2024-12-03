@@ -12,6 +12,7 @@ using namespace geode::prelude;
 using namespace Serpent;
 
 void unzipAndExecute(std::filesystem::path scripts) {
+	log::info("Unzipping and executing...");
 	auto unzippedDirRes = geode::utils::file::createDirectory(Mod::get()->getConfigDir() / "unzipped");
 	if (unzippedDirRes.isErr()) {
 		log::error("There was an error creating the `unzipped` directory: {}", unzippedDirRes.err());
@@ -68,15 +69,19 @@ void unzipAndExecute(std::filesystem::path scripts) {
 	}
 }
 
+
 $on_mod(Loaded) {
-	py::initialize_interpreter();
-	Serpent::initModule();
-	bindings::_geode::enums();
-	bindings::_geode::bind();
-	bindings::cocos::enums();
-	bindings::cocos::bind();
-	bindings::robtop::bind();
-	bindings::serpent::bind();
+	log::debug("Serpent loaded!");
+	if (!Py_IsInitialized()) {
+		py::initialize_interpreter();
+	}
+	py::module m = py::module::import("__main__");
+	bindings::_geode::enums(m);
+	bindings::_geode::bind(m);
+	bindings::cocos::enums(m);
+	bindings::cocos::bind(m);
+	bindings::robtop::bind(m);
+	bindings::serpent::bind(m);
 
 	auto ScriptsDirectoryResult = geode::utils::file::createDirectory(Mod::get()->getConfigDir() / "scripts");
 	if (ScriptsDirectoryResult.isErr()) {

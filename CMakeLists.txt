@@ -28,10 +28,12 @@ add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 CPMAddPackage(
     NAME pybind11
     GITHUB_REPOSITORY pybind/pybind11
-    VERSION 2.9.0 # specify the version you need
+    VERSION 2.13.6
 )
 
+set(Python_USE_STATIC_LIBS ON)
 find_package(Python REQUIRED COMPONENTS Interpreter Development)
-target_link_libraries(${PROJECT_NAME} pybind11::embed pybind11::module Python::Python)
+
+target_link_libraries(${PROJECT_NAME} pybind11::embed pybind11::module)
 
 setup_geode_mod(${PROJECT_NAME})
