@@ -15,3 +15,5 @@
 # Known Issues
 - Missing DLL or dependency error:
 - Make sure you have python 3.11.3 installed.
+- If you do, make sure that it's in the PATH.
+- (you can check by running `python --version` in the console)
