@@ -11,6 +11,10 @@
 	"version": "v1.0.0-beta.1",
 	"developer": "YellowCat98",
 	"description": "Run python scripts within GD.",
+	"links": {
+		"source": "https://github.com/YellowCat98/Serpent/",
+		"community": "https://discord.gg/qnPgmUVZsV"
+	},
 	"early-load": true,
 	"tags": ["modtober24", "developer"],
 	"resources": {
