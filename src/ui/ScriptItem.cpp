@@ -18,6 +18,7 @@ bool ScriptItem::init(matjson::Value theJson, std::function<void(CCObject*)> onB
 	bg->setID("background");
 	//bg->setOpacity(55);
 	bg->ignoreAnchorPointForPosition(false);
+	//testing
 	bg->setAnchorPoint({0.9f, 0.5f});
 	bg->setScale(0.7f);
 	this->setContentSize({445, 30});
