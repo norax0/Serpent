@@ -19,7 +19,7 @@ bool ScriptItem::init(matjson::Value theJson, std::function<void(CCObject*)> onB
 	//bg->setOpacity(55);
 	bg->ignoreAnchorPointForPosition(false);
 	//testing
-	bg->setAnchorPoint({0.9f, 0.5f});
+	bg->setAnchorPoint({0.5f, 0.5f});
 	bg->setScale(0.7f);
 	this->setContentSize({445, 30});
 	bg->setContentSize((m_obContentSize - ccp(6, 0)) / bg->getScale());
@@ -28,7 +28,7 @@ bool ScriptItem::init(matjson::Value theJson, std::function<void(CCObject*)> onB
 	mainContainer = CCNode::create();
 	mainContainer->setID("main-container");
 	mainContainer->setScale(0.4f);
-	mainContainer->setAnchorPoint({0.0f, 0.4f});
+	mainContainer->setAnchorPoint({0.0f, 0.6f});
 	mainContainer->setLayout(
 		ColumnLayout::create()
 			//->setAxisReverse(true)
